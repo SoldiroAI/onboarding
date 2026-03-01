@@ -1,0 +1,3308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soldiro AI — Client Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   TOKENS — exact Soldiro brand
+══════════════════════════════════════ */
+:root {
+  --bg:       #07070a;
+  --surface:  #0d0d16;
+  --surface2: #111119;
+  --border:   #1e1e2e;
+  --border2:  #28283c;
+  --gold:     #e8b84b;
+  --gold2:    #c49030;
+  --gold3:    #f5d07a;
+  --goldfade: rgba(232,184,75,0.07);
+  --goldring: rgba(232,184,75,0.18);
+  --red:      #e84b6a;
+  --green:    #2ecc8a;
+  --text:     #eae6f5;
+  --text2:    #9990b8;
+  --muted:    #3e3c5a;
+  --font-d:   'Barlow Condensed', sans-serif;
+  --font-b:   'Sora', sans-serif;
+  --font-m:   'JetBrains Mono', monospace;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-b);
+  font-size: 14px;
+  overflow: hidden;
+}
+
+/* ══ LAYOUT SHELL ══ */
+.shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 56px 1fr;
+  height: 100vh;
+}
+
+/* ══ TOP NAV ══ */
+.topnav {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-badge {
+  background: var(--gold);
+  color: var(--bg);
+  font-family: var(--font-d);
+  font-size: 16px;
+  font-weight: 800;
+  padding: 3px 8px 2px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.brand-name {
+  font-family: var(--font-d);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+
+.brand-sep { color: var(--muted); margin: 0 4px; }
+
+.brand-sub {
+  font-family: var(--font-m);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold2);
+  text-transform: uppercase;
+}
+
+.nav-client-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-m);
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.nav-live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: breathe 2s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,100% { opacity:1; box-shadow:0 0 8px var(--green); }
+  50%      { opacity:0.6; box-shadow:0 0 3px var(--green); }
+}
+
+/* ══ LEFT RAIL ══ */
+.rail {
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  padding: 32px 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.rail-section {
+  padding: 0 24px;
+  margin-bottom: 8px;
+}
+
+.rail-label {
+  font-family: var(--font-m);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-bottom: 3px;
+  position: relative;
+}
+
+.step-item:hover { background: var(--goldfade); }
+
+.step-item.active {
+  background: var(--goldfade);
+  border: 1px solid var(--goldring);
+}
+
+.step-item.done .step-num {
+  background: var(--green);
+  color: var(--bg);
+  border-color: var(--green);
+}
+
+.step-item.done .step-name { color: var(--text2); }
+
+.step-item.active .step-name { color: var(--gold); }
+.step-item.active .step-num  { border-color: var(--gold); color: var(--gold); }
+
+.step-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  font-family: var(--font-m);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.step-num.check::after { content: '✓'; }
+.step-num.check { font-size: 13px; }
+
+.step-info { flex: 1; min-width: 0; }
+
+.step-name {
+  font-family: var(--font-b);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+
+.step-desc {
+  font-family: var(--font-m);
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+/* Progress bar */
+.rail-progress {
+  margin: 24px 24px 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-m);
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.progress-label span:last-child { color: var(--gold); }
+
+.progress-track {
+  height: 3px;
+  background: var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold2), var(--gold));
+  border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.34,1.2,0.64,1);
+  width: 0%;
+}
+
+/* ══ MAIN CONTENT ══ */
+.main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Step panels */
+.step-panel {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding: 48px 56px;
+  animation: slideIn 0.3s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.step-panel.active { display: flex; }
+
+@keyframes slideIn {
+  from { opacity:0; transform:translateX(24px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+.step-header {
+  margin-bottom: 36px;
+}
+
+.step-eyebrow {
+  font-family: var(--font-m);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold2);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.step-title {
+  font-family: var(--font-d);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.05;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
+}
+
+.step-title em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.step-subtitle {
+  font-family: var(--font-b);
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+  max-width: 560px;
+}
+
+/* ══ FORM ELEMENTS ══ */
+.field-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.field-grid.cols2 { grid-template-columns: 1fr 1fr; }
+.field-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  font-family: var(--font-m);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text2);
+  text-transform: uppercase;
+}
+
+.field label span {
+  color: var(--gold);
+  margin-left: 3px;
+}
+
+.field input,
+.field textarea,
+.field select {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: var(--font-b);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--gold2);
+  box-shadow: 0 0 0 3px rgba(232,184,75,0.08);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--muted);
+}
+
+.field textarea { resize: vertical; min-height: 88px; line-height: 1.5; }
+
+.field select { cursor: pointer; }
+.field select option { background: var(--surface2); }
+
+.field-hint {
+  font-family: var(--font-m);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ══ TAG INPUT ══ */
+.tag-input-wrap {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 48px;
+  align-items: flex-start;
+  cursor: text;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.tag-input-wrap:focus-within {
+  border-color: var(--gold2);
+  box-shadow: 0 0 0 3px rgba(232,184,75,0.08);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--goldring);
+  border: 1px solid rgba(232,184,75,0.25);
+  color: var(--gold3);
+  font-family: var(--font-m);
+  font-size: 11px;
+  padding: 3px 8px 3px 10px;
+  border-radius: 4px;
+  animation: tagPop 0.15s ease;
+}
+
+@keyframes tagPop {
+  from { transform: scale(0.85); opacity:0; }
+  to   { transform: scale(1);    opacity:1; }
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  color: var(--gold2);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0 1px;
+  transition: color 0.1s;
+}
+
+.tag-remove:hover { color: var(--red); }
+
+.tag-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-b);
+  font-size: 13px;
+  flex: 1;
+  min-width: 120px;
+  padding: 2px 4px;
+}
+
+.tag-input::placeholder { color: var(--muted); }
+
+/* ══ TONE CARDS ══ */
+.tone-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.tone-card {
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--surface2);
+}
+
+.tone-card:hover {
+  border-color: var(--gold2);
+  background: var(--goldfade);
+}
+
+.tone-card.selected {
+  border-color: var(--gold);
+  background: var(--goldfade);
+  box-shadow: 0 0 0 1px var(--gold), inset 0 1px 0 rgba(232,184,75,0.1);
+}
+
+.tone-emoji { font-size: 22px; margin-bottom: 8px; display: block; }
+
+.tone-name {
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.tone-desc {
+  font-family: var(--font-m);
+  font-size: 10px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+.tone-card.selected .tone-name { color: var(--gold); }
+
+/* ══ VALUE PROP BUILDER ══ */
+.vp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.vp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+  animation: tagPop 0.2s ease;
+}
+
+.vp-row input {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: var(--font-b);
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.vp-row input:focus { border-color: var(--gold2); }
+.vp-row input::placeholder { color: var(--muted); }
+
+.vp-remove {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vp-remove:hover { border-color: var(--red); color: var(--red); background: rgba(232,75,106,0.08); }
+
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px dashed var(--border2);
+  background: transparent;
+  color: var(--text2);
+  font-family: var(--font-m);
+  font-size: 11px;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.add-btn:hover { border-color: var(--gold2); color: var(--gold); }
+.add-btn-icon { font-size: 16px; color: var(--gold2); }
+
+/* ══ API KEYS STEP ══ */
+.api-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+
+.api-card.valid { border-color: rgba(46,204,138,0.3); }
+.api-card.invalid { border-color: rgba(232,75,106,0.3); }
+
+.api-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.api-service {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.api-icon {
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  background: var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.api-service-name {
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.api-service-desc {
+  font-family: var(--font-m);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.api-status {
+  font-family: var(--font-m);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.api-status.valid   { border-color: rgba(46,204,138,0.3); color: var(--green); background: rgba(46,204,138,0.06); }
+.api-status.invalid { border-color: rgba(232,75,106,0.3); color: var(--red); background: rgba(232,75,106,0.06); }
+.api-status.filled  { border-color: var(--goldring); color: var(--gold2); background: var(--goldfade); }
+
+.api-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.api-input-row input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 9px 14px;
+  color: var(--text);
+  font-family: var(--font-m);
+  font-size: 12px;
+  outline: none;
+  letter-spacing: 1px;
+  transition: border-color 0.15s;
+}
+
+.api-input-row input:focus { border-color: var(--gold2); }
+.api-input-row input::placeholder { color: var(--muted); letter-spacing: 0; font-family: var(--font-b); }
+
+.eye-btn {
+  padding: 9px 12px;
+  background: var(--border2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.eye-btn:hover { background: var(--goldfade); border-color: var(--gold2); color: var(--gold); }
+
+.api-optional {
+  font-family: var(--font-m);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* ══ OUTPUT STEP ══ */
+.output-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.output-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.output-card:hover { border-color: var(--gold2); }
+
+.output-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.output-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-d);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.output-card-icon { font-size: 18px; }
+
+.output-card-badge {
+  font-family: var(--font-m);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.badge-n8n {
+  background: rgba(234,105,38,0.12);
+  border: 1px solid rgba(234,105,38,0.25);
+  color: #ea6926;
+}
+
+.badge-airtable {
+  background: rgba(30,179,135,0.1);
+  border: 1px solid rgba(30,179,135,0.25);
+  color: #1eb387;
+}
+
+.output-code {
+  padding: 16px 18px;
+  background: var(--bg);
+  font-family: var(--font-m);
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.7;
+  max-height: 220px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.output-code .key   { color: var(--gold2); }
+.output-code .val   { color: var(--text); }
+.output-code .str   { color: #a8e6cf; }
+.output-code .num   { color: #ffcb6b; }
+.output-code .bool  { color: #82aaff; }
+.output-code .cmt   { color: var(--muted); }
+
+.download-strip {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.dl-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-m);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  border: none;
+}
+
+.dl-btn.primary {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.dl-btn.primary:hover {
+  background: var(--gold3);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(232,184,75,0.3);
+}
+
+.dl-btn.secondary {
+  background: var(--surface2);
+  color: var(--text2);
+  border: 1px solid var(--border2);
+}
+
+.dl-btn.secondary:hover {
+  border-color: var(--gold2);
+  color: var(--gold);
+}
+
+.dl-icon { font-size: 16px; }
+
+/* ══ SUMMARY PILLS ══ */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.summary-pill {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 14px 12px;
+  text-align: center;
+}
+
+.summary-pill-val {
+  font-family: var(--font-d);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.summary-pill-lbl {
+  font-family: var(--font-m);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+/* ══ CHECKLIST ══ */
+.checklist {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.checklist-title {
+  font-family: var(--font-m);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-b);
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.check-item:last-child { border-bottom: none; }
+
+.check-icon { font-size: 14px; flex-shrink: 0; }
+.check-item.done { color: var(--green); }
+.check-item.done .check-icon { color: var(--green); }
+.check-item.warn { color: var(--gold2); }
+.check-item.warn .check-icon { color: var(--gold); }
+
+/* ══ BOTTOM BAR ══ */
+.bottom-bar {
+  padding: 16px 56px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.bottom-step-info {
+  font-family: var(--font-m);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.bottom-step-info strong {
+  color: var(--text2);
+}
+
+.nav-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-back {
+  padding: 10px 22px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text2);
+  font-family: var(--font-m);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-back:hover { border-color: var(--gold2); color: var(--gold); }
+.btn-back:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-next {
+  padding: 10px 28px;
+  background: var(--gold);
+  color: var(--bg);
+  font-family: var(--font-m);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.btn-next:hover { background: var(--gold3); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,184,75,0.3); }
+.btn-next:active { transform: translateY(0); }
+
+.btn-next .arrow { font-size: 14px; transition: transform 0.15s; }
+.btn-next:hover .arrow { transform: translateX(3px); }
+
+/* ══ VALIDATION ══ */
+.field input.error,
+.field textarea.error {
+  border-color: rgba(232,75,106,0.5);
+  box-shadow: 0 0 0 3px rgba(232,75,106,0.08);
+}
+
+.field-error {
+  font-family: var(--font-m);
+  font-size: 10px;
+  color: var(--red);
+  margin-top: 3px;
+}
+
+/* ══ SCROLL STYLING ══ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ══ TOAST ══ */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  background: var(--surface2);
+  border: 1px solid var(--goldring);
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-family: var(--font-m);
+  font-size: 12px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 100;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+}
+
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ══ AUTO-SAVE ANIMATIONS ══ */
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(10px); }
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 var(--goldring); }
+  50%      { box-shadow: 0 0 0 4px var(--goldring); }
+}
+.auto-save-pulse { animation: pulse 2s ease-in-out infinite; }
+
+/* ══ HISTORY PANEL ══ */
+.history-item:hover { background: var(--goldfade) !important; }
+
+/* ══ PASSWORD MODAL ══ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.82);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeSlideUp 0.2s ease;
+}
+.modal-box {
+  background: var(--surface2);
+  border: 1px solid var(--goldring);
+  border-radius: 12px;
+  padding: 32px;
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.modal-title {
+  font-family: var(--font-d); font-size: 20px; font-weight: 700;
+  color: var(--gold); margin-bottom: 10px;
+}
+.modal-desc {
+  font-family: var(--font-m); font-size: 11px; color: var(--text2);
+  line-height: 1.6; margin-bottom: 20px;
+}
+.modal-input {
+  width: 100%; padding: 12px 14px;
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 6px; color: var(--text);
+  font-family: var(--font-b); font-size: 13px;
+  outline: none; margin-bottom: 12px;
+  transition: border-color 0.15s;
+}
+.modal-input:focus { border-color: var(--gold2); }
+.modal-input::placeholder { color: var(--muted); }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+.modal-btn-skip {
+  padding: 10px 20px; background: transparent;
+  border: 1px solid var(--border2); color: var(--text2);
+  border-radius: 6px; cursor: pointer; font-family: var(--font-m);
+  font-size: 11px; transition: all 0.15s;
+}
+.modal-btn-skip:hover { border-color: var(--gold2); color: var(--gold); }
+.modal-btn-encrypt {
+  padding: 10px 22px; background: var(--gold);
+  color: var(--bg); border: none; border-radius: 6px;
+  cursor: pointer; font-family: var(--font-m);
+  font-size: 11px; font-weight: 500; letter-spacing: 1px;
+  transition: all 0.15s;
+}
+.modal-btn-encrypt:hover { background: var(--gold3); }
+
+/* ══ SECURITY BADGE ON KEYS STEP ══ */
+.security-notice {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: rgba(46,204,138,0.06);
+  border: 1px solid rgba(46,204,138,0.2);
+  border-radius: 8px; margin-bottom: 16px;
+  font-family: var(--font-m); font-size: 11px; color: var(--green);
+}
+
+/* ══ AUTOSAVE BADGE IN NAV ══ */
+.autosave-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-m); font-size: 10px;
+  color: var(--muted); letter-spacing: 1px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+.autosave-badge.saved { color: var(--green); border-color: rgba(46,204,138,0.25); }
+.autosave-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.modal-btn-encrypt { line-height: 1.4; }
+.modal-btn-skip { line-height: 1.4; }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 220px 1fr; }
+  .step-panel { padding: 32px 28px; }
+  .bottom-bar { padding: 14px 28px; }
+  .tone-grid { grid-template-columns: 1fr 1fr; }
+  .output-grid { grid-template-columns: 1fr; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .shell { grid-template-columns: 1fr; grid-template-rows: 56px auto 1fr auto; }
+  .rail { display: none; }
+  .field-grid.cols2 { grid-template-columns: 1fr; }
+  .field-grid.cols3 { grid-template-columns: 1fr; }
+  .tone-grid { grid-template-columns: 1fr; }
+  .download-strip { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- ══ TOP NAV ══ -->
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-badge">S</div>
+    <span class="brand-name">Soldiro AI</span>
+    <span class="brand-sep">·</span>
+    <span class="brand-sub">Client Onboarding</span>
+  </div>
+  <div class="nav-client-badge">
+    <div id="autosaveBadge" class="autosave-badge">
+      <div class="autosave-dot"></div>
+      <span id="autosaveLabel">Unsaved</span>
+    </div>
+    <button onclick="toggleHistoryPanel()" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:5px 11px;border-radius:6px;font-family:var(--font-m);font-size:10px;cursor:pointer;letter-spacing:1px;transition:all 0.15s" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold2)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='var(--border2)'">📋 History</button>
+    <button onclick="importVersions()" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text2);padding:5px 11px;border-radius:6px;font-family:var(--font-m);font-size:10px;cursor:pointer;letter-spacing:1px;transition:all 0.15s" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold2)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='var(--border2)'">📤 Import</button>
+    <div class="nav-live-dot"></div>
+    <span id="clientNameBadge">New Client Setup</span>
+  </div>
+</nav>
+
+<!-- ══ LEFT RAIL ══ -->
+<aside class="rail">
+  <div class="rail-section">
+    <div class="rail-label">Setup Steps</div>
+
+    <div class="step-item active" id="rail-0" onclick="goToStep(0)">
+      <div class="step-num" id="num-0">1</div>
+      <div class="step-info">
+        <div class="step-name">Company & Contact</div>
+        <div class="step-desc">Client details</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="rail-1" onclick="goToStep(1)">
+      <div class="step-num" id="num-1">2</div>
+      <div class="step-info">
+        <div class="step-name">Ideal Customer Profile</div>
+        <div class="step-desc">ICP definition</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="rail-2" onclick="goToStep(2)">
+      <div class="step-num" id="num-2">3</div>
+      <div class="step-info">
+        <div class="step-name">Target Job Titles</div>
+        <div class="step-desc">Decision makers</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="rail-3" onclick="goToStep(3)">
+      <div class="step-num" id="num-3">4</div>
+      <div class="step-info">
+        <div class="step-name">Tone & Voice</div>
+        <div class="step-desc">Outreach personality</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="rail-4" onclick="goToStep(4)">
+      <div class="step-num" id="num-4">5</div>
+      <div class="step-info">
+        <div class="step-name">Value Propositions</div>
+        <div class="step-desc">Pain → solution pairs</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="rail-5" onclick="goToStep(5)">
+      <div class="step-num" id="num-5">6</div>
+      <div class="step-info">
+        <div class="step-name">API Keys</div>
+        <div class="step-desc">Integrations</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="rail-6" onclick="goToStep(6)">
+      <div class="step-num" id="num-6">7</div>
+      <div class="step-info">
+        <div class="step-name">Generate Config</div>
+        <div class="step-desc">Export & deploy</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail-progress">
+    <div class="progress-label">
+      <span>Progress</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN CONTENT ══ -->
+<div class="main">
+
+  <!-- ─── STEP 1: COMPANY & CONTACT ─── -->
+  <div class="step-panel active" id="panel-0">
+    <div class="step-header">
+      <div class="step-eyebrow">Step 1 of 7 · Foundation</div>
+      <h2 class="step-title">Who are we <em>building for?</em></h2>
+      <p class="step-subtitle">This becomes the client record in Airtable and pre-fills the n8n workflow metadata. Takes 60 seconds.</p>
+    </div>
+
+    <div class="field-grid cols2">
+      <div class="field">
+        <label>Company Name <span>*</span></label>
+        <input type="text" id="companyName" placeholder="Acme Corp" oninput="syncClientBadge()">
+      </div>
+      <div class="field">
+        <label>Website / Domain <span>*</span></label>
+        <input type="text" id="companyDomain" placeholder="acmecorp.com">
+      </div>
+      <div class="field">
+        <label>Your Name <span>*</span></label>
+        <input type="text" id="clientName" placeholder="Jane Smith">
+      </div>
+      <div class="field">
+        <label>Your Email <span>*</span></label>
+        <input type="email" id="clientEmail" placeholder="jane@acmecorp.com">
+      </div>
+      <div class="field">
+        <label>Industry</label>
+        <select id="industry">
+          <option value="">Select industry</option>
+          <option>SaaS / Software</option>
+          <option>B2B Services</option>
+          <option>Marketing / Agency</option>
+          <option>Fintech</option>
+          <option>HR Tech</option>
+          <option>Sales Tech</option>
+          <option>E-commerce</option>
+          <option>Consulting</option>
+          <option>Legal Tech</option>
+          <option>Healthcare Tech</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Company Stage</label>
+        <select id="stage">
+          <option value="">Select stage</option>
+          <option>Pre-seed / Seed</option>
+          <option>Series A</option>
+          <option>Series B</option>
+          <option>Series C+</option>
+          <option>Bootstrapped / Profitable</option>
+          <option>Enterprise</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label>One-line company description</label>
+        <input type="text" id="companyDesc" placeholder="We help B2B SaaS companies reduce churn with AI-powered customer success workflows">
+        <div class="field-hint">Claude uses this to write personalised first lines. The more specific, the better.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── STEP 2: ICP ─── -->
+  <div class="step-panel" id="panel-1">
+    <div class="step-header">
+      <div class="step-eyebrow">Step 2 of 7 · Targeting</div>
+      <h2 class="step-title">Define your <em>Ideal Customer</em></h2>
+      <p class="step-subtitle">Soldiro AI uses this to score and filter leads in the enrichment pipeline. Be precise — vague ICPs produce vague results.</p>
+    </div>
+
+    <div class="field-grid" style="gap:24px">
+      <div class="field-grid cols2">
+        <div class="field">
+          <label>Target Company Size <span>*</span></label>
+          <select id="companySize">
+            <option value="">Select range</option>
+            <option value="1-10">1–10 (micro)</option>
+            <option value="11-50">11–50 (startup)</option>
+            <option value="51-200">51–200 (scale-up)</option>
+            <option value="201-500">201–500 (mid-market)</option>
+            <option value="501-1000">501–1,000</option>
+            <option value="1001-5000">1,001–5,000</option>
+            <option value="5000+">5,000+ (enterprise)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Geography <span>*</span></label>
+          <select id="geography">
+            <option value="">Select region</option>
+            <option value="us">United States</option>
+            <option value="uk">United Kingdom</option>
+            <option value="eu">Europe (broader)</option>
+            <option value="dach">DACH (DE/AT/CH)</option>
+            <option value="nordics">Nordics</option>
+            <option value="apac">APAC</option>
+            <option value="global">Global</option>
+            <option value="latam">Latin America</option>
+            <option value="mena">MENA</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Annual Revenue Range</label>
+          <select id="revenue">
+            <option value="">Select range</option>
+            <option value="<1m">Under $1M ARR</option>
+            <option value="1-10m">$1M – $10M ARR</option>
+            <option value="10-50m">$10M – $50M ARR</option>
+            <option value="50-200m">$50M – $200M ARR</option>
+            <option value="200m+">$200M+ ARR</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Funding Stage</label>
+          <select id="fundingStage">
+            <option value="">Any / don't filter</option>
+            <option value="bootstrapped">Bootstrapped</option>
+            <option value="pre-seed">Pre-seed / Angel</option>
+            <option value="seed">Seed</option>
+            <option value="series-a">Series A</option>
+            <option value="series-b">Series B</option>
+            <option value="series-c">Series C+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Target Industries / Verticals <span>*</span></label>
+        <div class="tag-input-wrap" id="icpIndustriesWrap" onclick="document.getElementById('icpIndustriesInput').focus()">
+          <input type="text" id="icpIndustriesInput" class="tag-input" placeholder="Type an industry and press Enter…" onkeydown="handleTagInput(event,'icpIndustries')">
+        </div>
+        <div class="field-hint">Press Enter to add. E.g. "B2B SaaS", "HR Tech", "Fintech", "Legal Tech"</div>
+      </div>
+
+      <div class="field">
+        <label>Keywords — companies that signal good fit</label>
+        <div class="tag-input-wrap" id="icpKeywordsWrap" onclick="document.getElementById('icpKeywordsInput').focus()">
+          <input type="text" id="icpKeywordsInput" class="tag-input" placeholder="Type a keyword and press Enter…" onkeydown="handleTagInput(event,'icpKeywords')">
+        </div>
+        <div class="field-hint">E.g. "remote-first", "Series A", "fast-growing", "venture-backed", "hiring SDRs"</div>
+      </div>
+
+      <div class="field">
+        <label>Exclusions — companies to skip</label>
+        <div class="tag-input-wrap" id="icpExclusionsWrap" onclick="document.getElementById('icpExclusionsInput').focus()">
+          <input type="text" id="icpExclusionsInput" class="tag-input" placeholder="Type exclusion and press Enter…" onkeydown="handleTagInput(event,'icpExclusions')">
+        </div>
+        <div class="field-hint">E.g. "competitors", "agencies", "non-profits", "education", "government"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── STEP 3: TITLES ─── -->
+  <div class="step-panel" id="panel-2">
+    <div class="step-header">
+      <div class="step-eyebrow">Step 3 of 7 · Decision Makers</div>
+      <h2 class="step-title">Who does the <em>agent target?</em></h2>
+      <p class="step-subtitle">Soldiro AI passes these to Apollo's person search. Priority order matters — the agent picks the highest-ranked match per company.</p>
+    </div>
+
+    <div class="field-grid" style="gap:24px">
+      <div class="field">
+        <label>Primary Titles — ranked by priority <span>*</span></label>
+        <div class="tag-input-wrap" id="primaryTitlesWrap" onclick="document.getElementById('primaryTitlesInput').focus()">
+          <input type="text" id="primaryTitlesInput" class="tag-input" placeholder="Type a title and press Enter…" onkeydown="handleTagInput(event,'primaryTitles')">
+        </div>
+        <div class="field-hint">First-priority contacts. E.g. "VP Sales", "Head of Revenue", "CRO", "Chief Revenue Officer"</div>
+      </div>
+
+      <div class="field">
+        <label>Secondary Titles — fallback if primary not found</label>
+        <div class="tag-input-wrap" id="secondaryTitlesWrap" onclick="document.getElementById('secondaryTitlesInput').focus()">
+          <input type="text" id="secondaryTitlesInput" class="tag-input" placeholder="Type a title and press Enter…" onkeydown="handleTagInput(event,'secondaryTitles')">
+        </div>
+        <div class="field-hint">E.g. "Sales Director", "Head of Sales", "Sales Manager", "Director of Business Development"</div>
+      </div>
+
+      <div class="field-grid cols2">
+        <div class="field">
+          <label>Seniority Filter</label>
+          <select id="seniority">
+            <option value="any">Any seniority</option>
+            <option value="c_suite">C-Suite only</option>
+            <option value="vp_plus">VP and above</option>
+            <option value="director_plus">Director and above</option>
+            <option value="manager_plus">Manager and above</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Max contacts per company</label>
+          <select id="maxContacts">
+            <option value="1">1 (most targeted)</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="5">5 (broader)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Title Exclusions — skip these roles</label>
+        <div class="tag-input-wrap" id="titleExclusionsWrap" onclick="document.getElementById('titleExclusionsInput').focus()">
+          <input type="text" id="titleExclusionsInput" class="tag-input" placeholder="Type an exclusion and press Enter…" onkeydown="handleTagInput(event,'titleExclusions')">
+        </div>
+        <div class="field-hint">E.g. "intern", "junior", "assistant", "coordinator" — roles with low buying authority</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── STEP 4: TONE ─── -->
+  <div class="step-panel" id="panel-3">
+    <div class="step-header">
+      <div class="step-eyebrow">Step 4 of 7 · Personality</div>
+      <h2 class="step-title">How should Soldiro <em>sound?</em></h2>
+      <p class="step-subtitle">This shapes every email Claude writes — the first line, subject, and all 5 sequence steps. Pick one, then refine with custom instructions.</p>
+    </div>
+
+    <div class="tone-grid" id="toneGrid">
+      <div class="tone-card selected" onclick="selectTone(this,'direct')">
+        <span class="tone-emoji">⚡</span>
+        <div class="tone-name">Direct &amp; Sharp</div>
+        <div class="tone-desc">No fluff. Short sentences. Respects the reader's time. Best for C-suite and founders.</div>
+      </div>
+      <div class="tone-card" onclick="selectTone(this,'consultative')">
+        <span class="tone-emoji">🎯</span>
+        <div class="tone-name">Consultative</div>
+        <div class="tone-desc">Insight-led. Demonstrates understanding of their world before the pitch. Best for VP/Director.</div>
+      </div>
+      <div class="tone-card" onclick="selectTone(this,'friendly')">
+        <span class="tone-emoji">😊</span>
+        <div class="tone-name">Warm &amp; Friendly</div>
+        <div class="tone-desc">Conversational, human, approachable. Works well in lower-formality industries.</div>
+      </div>
+      <div class="tone-card" onclick="selectTone(this,'challenger')">
+        <span class="tone-emoji">🔥</span>
+        <div class="tone-name">Challenger</div>
+        <div class="tone-desc">Opens with a provocation or counterintuitive insight. High-risk, high-reward.</div>
+      </div>
+      <div class="tone-card" onclick="selectTone(this,'data-driven')">
+        <span class="tone-emoji">📊</span>
+        <div class="tone-name">Data-Driven</div>
+        <div class="tone-desc">Leads with stats, benchmarks, and ROI language. Best for analytics-minded buyers.</div>
+      </div>
+      <div class="tone-card" onclick="selectTone(this,'storytelling')">
+        <span class="tone-emoji">📖</span>
+        <div class="tone-name">Story-Led</div>
+        <div class="tone-desc">Opens with a customer narrative or "we worked with a company just like yours." Builds trust.</div>
+      </div>
+    </div>
+
+    <div class="field-grid" style="gap:16px">
+      <div class="field">
+        <label>Custom Tone Instructions — added to every Claude prompt</label>
+        <textarea id="toneInstructions" placeholder="E.g. 'Always mention the prospect's recent funding round. Never use the word synergy. Keep emails under 80 words. Sign off as if from a human rep, not an AI.'"></textarea>
+        <div class="field-hint">These are injected verbatim into the system prompt. Be specific — Claude follows instructions literally.</div>
+      </div>
+      <div class="field-grid cols2">
+        <div class="field">
+          <label>Sender Name (appears in From)</label>
+          <input type="text" id="senderName" placeholder="Alex from Acme">
+        </div>
+        <div class="field">
+          <label>Signature Line</label>
+          <input type="text" id="signatureLine" placeholder="Alex Chen · Head of Growth, Acme Corp">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── STEP 5: VALUE PROPS ─── -->
+  <div class="step-panel" id="panel-4">
+    <div class="step-header">
+      <div class="step-eyebrow">Step 5 of 7 · Messaging</div>
+      <h2 class="step-title">What pain do you <em>solve?</em></h2>
+      <p class="step-subtitle">Claude rotates through these pain→solution pairs across the 5-email sequence. Add at least 3 for sequence variety. The best ones are specific and quantified.</p>
+    </div>
+
+    <div class="vp-list" id="vpList">
+      <!-- populated by JS -->
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:24px">
+      <button class="add-btn" onclick="addVP()">
+        <span class="add-btn-icon">+</span>
+        Add Pain → Solution Pair
+      </button>
+      <span style="font-family:var(--font-m);font-size:10px;color:var(--muted)">Min. 3 recommended · Max. 8</span>
+    </div>
+
+    <div class="field-grid cols2">
+      <div class="field">
+        <label>Primary CTA — what should prospects do?</label>
+        <select id="primaryCTA">
+          <option value="book-call">Book a 15-min call</option>
+          <option value="book-demo">Schedule a demo</option>
+          <option value="reply-interest">Reply if interested</option>
+          <option value="watch-video">Watch a 3-min video</option>
+          <option value="free-audit">Get a free audit</option>
+          <option value="case-study">Read a case study</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>CTA URL / Calendar Link</label>
+        <input type="url" id="ctaUrl" placeholder="https://cal.com/yourlink">
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label>Social Proof — your best result in one sentence</label>
+        <input type="text" id="socialProof" placeholder="We helped Intercom reduce churn by 34% in 90 days — here's exactly how.">
+        <div class="field-hint">Used in email 3 (the proof step). Real numbers outperform vague claims by 4×.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── STEP 6: API KEYS ─── -->
+  <div class="step-panel" id="panel-5">
+    <div class="step-header">
+      <div class="step-eyebrow">Step 6 of 7 · Integrations</div>
+      <h2 class="step-title">Connect the <em>pipeline.</em></h2>
+      <p class="step-subtitle">These are injected as n8n credentials and Airtable variables. Keys are stored locally and never transmitted — only used to pre-fill your config export.</p>
+    </div>
+
+    <div class="security-notice">
+      <span>🔒</span>
+      Keys stay in your browser only. The n8n config exports use <code style="background:rgba(46,204,138,0.1);padding:1px 5px;border-radius:3px">{{$vars.*}}</code> placeholders — your actual keys go into a separate encrypted .env file. Nothing is sent to any server.
+    </div>
+
+    <div class="api-card" id="apiCard-clay">
+      <div class="api-card-header">
+        <div class="api-service">
+          <div class="api-icon">🏺</div>
+          <div>
+            <div class="api-service-name">Clay</div>
+            <div class="api-service-desc">Company enrichment · firmographics · tech stack</div>
+          </div>
+        </div>
+        <div class="api-status" id="status-clay">Required</div>
+      </div>
+      <div class="api-input-row">
+        <input type="password" id="key-clay" placeholder="clay_api_key_xxxxxxxxxxxxxxxx" oninput="updateApiStatus('clay')">
+        <button class="eye-btn" onclick="toggleEye('clay')" title="Show/hide">👁</button>
+      </div>
+    </div>
+
+    <div class="api-card" id="apiCard-apollo">
+      <div class="api-card-header">
+        <div class="api-service">
+          <div class="api-icon">🚀</div>
+          <div>
+            <div class="api-service-name">Apollo.io</div>
+            <div class="api-service-desc">Person search · contact data · company lookup</div>
+          </div>
+        </div>
+        <div class="api-status" id="status-apollo">Required</div>
+      </div>
+      <div class="api-input-row">
+        <input type="password" id="key-apollo" placeholder="apollo_xxxxxxxxxxxxxxxxxxxxxxxx" oninput="updateApiStatus('apollo')">
+        <button class="eye-btn" onclick="toggleEye('apollo')" title="Show/hide">👁</button>
+      </div>
+    </div>
+
+    <div class="api-card" id="apiCard-hunter">
+      <div class="api-card-header">
+        <div class="api-service">
+          <div class="api-icon">📧</div>
+          <div>
+            <div class="api-service-name">Hunter.io</div>
+            <div class="api-service-desc">Email verification · deliverability scoring</div>
+          </div>
+        </div>
+        <div class="api-status" id="status-hunter">Required</div>
+      </div>
+      <div class="api-input-row">
+        <input type="password" id="key-hunter" placeholder="hunter_xxxxxxxxxxxxxxxxxxxxxxxx" oninput="updateApiStatus('hunter')">
+        <button class="eye-btn" onclick="toggleEye('hunter')" title="Show/hide">👁</button>
+      </div>
+    </div>
+
+    <div class="api-card" id="apiCard-instantly">
+      <div class="api-card-header">
+        <div class="api-service">
+          <div class="api-icon">⚡</div>
+          <div>
+            <div class="api-service-name">Instantly.ai</div>
+            <div class="api-service-desc">Email sequencing · sending infrastructure · warmup</div>
+          </div>
+        </div>
+        <div class="api-status" id="status-instantly">Required</div>
+      </div>
+      <div class="api-input-row">
+        <input type="password" id="key-instantly" placeholder="inst_xxxxxxxxxxxxxxxxxxxxxxxx" oninput="updateApiStatus('instantly')">
+        <button class="eye-btn" onclick="toggleEye('instantly')" title="Show/hide">👁</button>
+      </div>
+    </div>
+
+    <div class="api-card" id="apiCard-cal">
+      <div class="api-card-header">
+        <div class="api-service">
+          <div class="api-icon">📅</div>
+          <div>
+            <div class="api-service-name">Cal.com</div>
+            <div class="api-service-desc">Auto-booking meetings when BANT criteria met</div>
+          </div>
+        </div>
+        <div class="api-status" id="status-cal">Optional</div>
+      </div>
+      <div class="api-input-row">
+        <input type="password" id="key-cal" placeholder="cal_xxxxxxxxxxxxxxxxxxxxxxxx" oninput="updateApiStatus('cal')">
+        <button class="eye-btn" onclick="toggleEye('cal')" title="Show/hide">👁</button>
+      </div>
+      <div class="api-optional">Optional — if omitted, qualified leads are flagged for manual booking</div>
+    </div>
+
+    <div class="api-card" id="apiCard-airtable">
+      <div class="api-card-header">
+        <div class="api-service">
+          <div class="api-icon">📋</div>
+          <div>
+            <div class="api-service-name">Airtable</div>
+            <div class="api-service-desc">Lead CRM · enrichment records · sequence tracking</div>
+          </div>
+        </div>
+        <div class="api-status" id="status-airtable">Required</div>
+      </div>
+      <div class="api-input-row">
+        <input type="password" id="key-airtable" placeholder="patXXXXXXXXXXXXXX.xxxxxxxxxx" oninput="updateApiStatus('airtable')">
+        <button class="eye-btn" onclick="toggleEye('airtable')" title="Show/hide">👁</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── STEP 7: GENERATE ─── -->
+  <div class="step-panel" id="panel-6">
+    <div class="step-header">
+      <div class="step-eyebrow">Step 7 of 7 · Export</div>
+      <h2 class="step-title"><em>Deploy-ready</em> config generated.</h2>
+      <p class="step-subtitle">Your complete n8n workflow JSON and Airtable schema are ready. Import both and you're live in under 5 minutes.</p>
+    </div>
+
+    <div class="summary-grid" id="summaryGrid">
+      <div class="summary-pill">
+        <div class="summary-pill-val" id="sumTitles">—</div>
+        <div class="summary-pill-lbl">Target Titles</div>
+      </div>
+      <div class="summary-pill">
+        <div class="summary-pill-val" id="sumVPs">—</div>
+        <div class="summary-pill-lbl">Value Props</div>
+      </div>
+      <div class="summary-pill">
+        <div class="summary-pill-val" id="sumAPIs">—</div>
+        <div class="summary-pill-lbl">APIs Connected</div>
+      </div>
+      <div class="summary-pill">
+        <div class="summary-pill-val">22</div>
+        <div class="summary-pill-lbl">Workflow Nodes</div>
+      </div>
+    </div>
+
+    <div class="checklist" id="deployChecklist">
+      <div class="checklist-title">Pre-deploy checklist</div>
+      <!-- populated by JS -->
+    </div>
+
+    <div class="output-grid">
+      <div class="output-card">
+        <div class="output-card-header">
+          <div class="output-card-title">
+            <span class="output-card-icon">⚙️</span>
+            n8n Workflow Config
+          </div>
+          <span class="output-card-badge badge-n8n">JSON</span>
+        </div>
+        <div class="output-code" id="n8nPreview">
+          <!-- populated by JS -->
+        </div>
+      </div>
+      <div class="output-card">
+        <div class="output-card-header">
+          <div class="output-card-title">
+            <span class="output-card-icon">📋</span>
+            Airtable Schema
+          </div>
+          <span class="output-card-badge badge-airtable">JSON</span>
+        </div>
+        <div class="output-code" id="airtablePreview">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <div class="download-strip">
+      <button class="dl-btn primary" onclick="showExportOptions()">
+        <span class="dl-icon">📦</span>
+        Export Config Package
+      </button>
+      <button class="dl-btn secondary" onclick="downloadN8N()" title="Download n8n workflow JSON — keys masked as {{$vars.*}}">
+        <span class="dl-icon">⚙️</span>
+        Workflow Only (Masked Keys)
+      </button>
+      <button class="dl-btn secondary" onclick="downloadAirtable()" title="Download Airtable base schema — no API keys">
+        <span class="dl-icon">📋</span>
+        Airtable Schema Only
+      </button>
+      <button class="dl-btn secondary" onclick="downloadEnv()" title="Download .env template with your API keys">
+        <span class="dl-icon">🔑</span>
+        .env Template
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══ BOTTOM BAR ══ -->
+  <div class="bottom-bar">
+    <div class="bottom-step-info" id="stepInfo">
+      <strong>Step 1</strong> of 7 — Company &amp; Contact
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" id="btnBack" onclick="prevStep()" disabled>← Back</button>
+      <button class="btn-next" id="btnNext" onclick="nextStep()">
+        Continue <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✓</span>
+  <span id="toastMsg">Saved</span>
+</div>
+
+<!-- JSZip for zip packaging -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<!-- Password Modal -->
+<div id="passwordModal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">🔐 Encrypt API Secrets</div>
+    <p class="modal-desc">Enter a password to encrypt your API keys with AES-256-GCM. You'll need this password to decrypt the secrets file. Store it somewhere safe — we never see it.</p>
+    <input type="password" id="encryptPassword" class="modal-input" placeholder="Encryption password (min 8 characters)">
+    <input type="password" id="confirmPassword" class="modal-input" placeholder="Confirm password">
+    <div id="modalError" style="font-family:var(--font-m);font-size:11px;color:var(--red);margin-bottom:8px;display:none"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-skip" onclick="closePasswordModal(false)">Skip Encryption</button>
+      <button class="modal-btn-encrypt" onclick="confirmEncryption()">Encrypt &amp; Download</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let currentStep = 0;
+const TOTAL_STEPS = 7;
+
+const tags = {
+  icpIndustries:  [],
+  icpKeywords:    [],
+  icpExclusions:  [],
+  primaryTitles:  [],
+  secondaryTitles:[],
+  titleExclusions:[],
+};
+
+let selectedTone = 'direct';
+
+let vpItems = [];
+
+const STEP_NAMES = [
+  'Company & Contact',
+  'Ideal Customer Profile',
+  'Target Job Titles',
+  'Tone & Voice',
+  'Value Propositions',
+  'API Keys',
+  'Generate Config',
+];
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+function goToStep(n) {
+  if (n > currentStep && !validateStep(currentStep)) return;
+  const panels = document.querySelectorAll('.step-panel');
+  panels[currentStep].classList.remove('active');
+  // Mark done
+  const railItem = document.getElementById('rail-' + currentStep);
+  railItem.classList.remove('active');
+  railItem.classList.add('done');
+  const num = document.getElementById('num-' + currentStep);
+  num.classList.add('check');
+  num.textContent = '✓';
+
+  currentStep = n;
+  panels[currentStep].classList.add('active');
+  panels[currentStep].style.animation = 'none';
+  void panels[currentStep].offsetWidth;
+  panels[currentStep].style.animation = '';
+
+  // Update rail
+  document.getElementById('rail-' + currentStep).classList.add('active');
+  document.getElementById('rail-' + currentStep).classList.remove('done');
+  // Re-mark current num if revisiting
+  const curNum = document.getElementById('num-' + currentStep);
+  curNum.classList.remove('check');
+  curNum.textContent = (currentStep + 1);
+
+  updateUI();
+  if (currentStep === 6) buildOutput();
+}
+
+function nextStep() {
+  if (!validateStep(currentStep)) return;
+  if (currentStep < TOTAL_STEPS - 1) goToStep(currentStep + 1);
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    const panels = document.querySelectorAll('.step-panel');
+    panels[currentStep].classList.remove('active');
+    const railItem = document.getElementById('rail-' + currentStep);
+    railItem.classList.remove('active');
+    const num = document.getElementById('num-' + currentStep);
+    num.classList.remove('check');
+    num.textContent = (currentStep + 1);
+
+    currentStep--;
+    panels[currentStep].classList.add('active');
+    document.getElementById('rail-' + currentStep).classList.add('active');
+    document.getElementById('rail-' + currentStep).classList.remove('done');
+    const prevNum = document.getElementById('num-' + currentStep);
+    prevNum.classList.remove('check');
+    prevNum.textContent = (currentStep + 1);
+
+    updateUI();
+  }
+}
+
+function updateUI() {
+  document.getElementById('btnBack').disabled = currentStep === 0;
+  const nextBtn = document.getElementById('btnNext');
+  if (currentStep === TOTAL_STEPS - 1) {
+    nextBtn.style.display = 'none';
+  } else {
+    nextBtn.style.display = '';
+  }
+  document.getElementById('stepInfo').innerHTML =
+    `<strong>Step ${currentStep + 1}</strong> of ${TOTAL_STEPS} — ${STEP_NAMES[currentStep]}`;
+
+  const pct = Math.round((currentStep / (TOTAL_STEPS - 1)) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+/* ═══════════════════════════════════════════
+   VALIDATION
+═══════════════════════════════════════════ */
+function validateDomain(d) {
+  return /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.[a-zA-Z]{2,}$/.test(d.replace(/^https?:\/\//, '').split('/')[0]);
+}
+
+function validateEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+function validateStep(step) {
+  let ok = true;
+  const required = {
+    0: ['companyName','companyDomain','clientName','clientEmail'],
+    1: [], 2: [], 3: [], 4: [], 5: [], 6: [],
+  };
+
+  (required[step] || []).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || !el.value.trim()) {
+      el?.classList.add('error');
+      el?.addEventListener('input', () => el.classList.remove('error'), {once:true});
+      ok = false;
+    }
+  });
+
+  // Extra semantic validation for step 0
+  if (step === 0 && ok) {
+    const domain = document.getElementById('companyDomain');
+    const email  = document.getElementById('clientEmail');
+    if (domain?.value && !validateDomain(domain.value)) {
+      domain.classList.add('error');
+      domain.addEventListener('input', () => domain.classList.remove('error'), {once:true});
+      showToast('⚠️', 'Invalid domain format — e.g. acmecorp.com', true);
+      ok = false;
+    }
+    if (ok && email?.value && !validateEmail(email.value)) {
+      email.classList.add('error');
+      email.addEventListener('input', () => email.classList.remove('error'), {once:true});
+      showToast('⚠️', 'Invalid email address', true);
+      ok = false;
+    }
+  }
+
+  if (!ok && step === 0) showToast('⚠️', 'Please fix the highlighted fields', true);
+  else if (!ok) showToast('⚠️', 'Please fill in required fields', true);
+  return ok;
+}
+
+/* ═══════════════════════════════════════════
+   TAG INPUT
+═══════════════════════════════════════════ */
+function handleTagInput(e, key) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const input = e.target;
+    const val = input.value.trim().replace(/,$/, '');
+    if (val && !tags[key].includes(val)) {
+      tags[key].push(val);
+      renderTags(key);
+    }
+    input.value = '';
+  }
+  if (e.key === 'Backspace' && e.target.value === '' && tags[key].length) {
+    tags[key].pop();
+    renderTags(key);
+  }
+}
+
+function renderTags(key) {
+  const wrap = document.getElementById(key + 'Wrap');
+  if (!wrap) return;
+  // Remove existing tags
+  wrap.querySelectorAll('.tag').forEach(t => t.remove());
+  const input = document.getElementById(key + 'Input');
+  tags[key].forEach(val => {
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.innerHTML = `${val}<button class="tag-remove" onclick="removeTag('${key}','${val.replace(/'/g,"\\'")}')">×</button>`;
+    wrap.insertBefore(tag, input);
+  });
+}
+
+function removeTag(key, val) {
+  tags[key] = tags[key].filter(t => t !== val);
+  renderTags(key);
+}
+
+/* ═══════════════════════════════════════════
+   TONE SELECTION
+═══════════════════════════════════════════ */
+function selectTone(card, tone) {
+  document.querySelectorAll('.tone-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedTone = tone;
+}
+
+/* ═══════════════════════════════════════════
+   VALUE PROPS
+═══════════════════════════════════════════ */
+function initVPs() {
+  vpItems = [
+    { pain: 'SDR ramp time is 90+ days', solution: 'Soldiro AI is live in 5 days, first meetings in week 2' },
+    { pain: 'Outreach is generic and ignored', solution: 'Claude writes a unique first line per company — reply rates 4× higher' },
+    { pain: 'Team spends 40 hrs/week on manual prospecting', solution: 'Fully automated enrichment pipeline — zero human touch' },
+  ];
+  renderVPs();
+}
+
+function renderVPs() {
+  const list = document.getElementById('vpList');
+  list.innerHTML = '';
+  vpItems.forEach((vp, i) => {
+    const row = document.createElement('div');
+    row.className = 'vp-row';
+    row.innerHTML = `
+      <input type="text" placeholder="The pain / problem they have…" value="${escHtml(vp.pain)}"
+             oninput="vpItems[${i}].pain=this.value">
+      <input type="text" placeholder="Your solution / result…" value="${escHtml(vp.solution)}"
+             oninput="vpItems[${i}].solution=this.value">
+      <button class="vp-remove" onclick="removeVP(${i})">×</button>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function addVP() {
+  if (vpItems.length >= 8) { showToast('⚠️', 'Max 8 value props'); return; }
+  vpItems.push({ pain: '', solution: '' });
+  renderVPs();
+  const inputs = document.querySelectorAll('.vp-row input');
+  if (inputs.length) inputs[inputs.length - 2].focus();
+}
+
+function removeVP(i) {
+  vpItems.splice(i, 1);
+  renderVPs();
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ═══════════════════════════════════════════
+   API KEYS
+═══════════════════════════════════════════ */
+function toggleEye(service) {
+  const input = document.getElementById('key-' + service);
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function updateApiStatus(service) {
+  const val = document.getElementById('key-' + service).value.trim();
+  const card = document.getElementById('apiCard-' + service);
+  const status = document.getElementById('status-' + service);
+  if (val.length > 8) {
+    card.classList.add('valid');
+    card.classList.remove('invalid');
+    status.className = 'api-status filled';
+    status.textContent = 'Configured';
+  } else if (val.length > 0) {
+    card.classList.remove('valid');
+    card.classList.add('invalid');
+    status.className = 'api-status invalid';
+    status.textContent = 'Too short';
+  } else {
+    card.classList.remove('valid','invalid');
+    status.className = 'api-status';
+    status.textContent = service === 'cal' ? 'Optional' : 'Required';
+  }
+}
+
+function getKey(service) {
+  return document.getElementById('key-' + service)?.value?.trim() || '';
+}
+
+/* ═══════════════════════════════════════════
+   CLIENT BADGE
+═══════════════════════════════════════════ */
+function syncClientBadge() {
+  const name = document.getElementById('companyName').value.trim();
+  document.getElementById('clientNameBadge').textContent = name || 'New Client Setup';
+}
+
+/* ═══════════════════════════════════════════
+   BUILD OUTPUT
+═══════════════════════════════════════════ */
+function collect() {
+  return {
+    company:        document.getElementById('companyName').value.trim(),
+    domain:         document.getElementById('companyDomain').value.trim(),
+    contactName:    document.getElementById('clientName').value.trim(),
+    contactEmail:   document.getElementById('clientEmail').value.trim(),
+    industry:       document.getElementById('industry').value,
+    stage:          document.getElementById('stage').value,
+    companyDesc:    document.getElementById('companyDesc').value.trim(),
+    companySize:    document.getElementById('companySize').value,
+    geography:      document.getElementById('geography').value,
+    revenue:        document.getElementById('revenue').value,
+    fundingStage:   document.getElementById('fundingStage').value,
+    icpIndustries:  tags.icpIndustries,
+    icpKeywords:    tags.icpKeywords,
+    icpExclusions:  tags.icpExclusions,
+    primaryTitles:  tags.primaryTitles,
+    secondaryTitles:tags.secondaryTitles,
+    titleExclusions:tags.titleExclusions,
+    seniority:      document.getElementById('seniority').value,
+    maxContacts:    document.getElementById('maxContacts').value,
+    tone:           selectedTone,
+    toneInstructions: document.getElementById('toneInstructions').value.trim(),
+    senderName:     document.getElementById('senderName').value.trim(),
+    signatureLine:  document.getElementById('signatureLine').value.trim(),
+    valuePros:      vpItems.filter(v => v.pain || v.solution),
+    primaryCTA:     document.getElementById('primaryCTA').value,
+    ctaUrl:         document.getElementById('ctaUrl').value.trim(),
+    socialProof:    document.getElementById('socialProof').value.trim(),
+    keys: {
+      clay:      getKey('clay'),
+      apollo:    getKey('apollo'),
+      hunter:    getKey('hunter'),
+      instantly: getKey('instantly'),
+      cal:       getKey('cal'),
+      airtable:  getKey('airtable'),
+    }
+  };
+}
+
+function buildN8NConfig(d) {
+  const allTitles = [...d.primaryTitles, ...d.secondaryTitles];
+  const tonePrompt = buildTonePrompt(d);
+  const vpText = d.valuePros.map((v,i) => `VP${i+1}: "${v.pain}" → "${v.solution}"`).join('\\n');
+
+  return {
+    meta: { instanceId: 'soldiro-' + Date.now() },
+    name: `Soldiro AI — ${d.company || 'Client'} Outbound`,
+    nodes: [
+      {
+        id: 'webhook-trigger',
+        name: 'Receive New Raw Lead',
+        type: 'n8n-nodes-base.webhook',
+        parameters: {
+          httpMethod: 'POST',
+          path: `soldiro-${(d.company||'client').toLowerCase().replace(/\s+/g,'-')}`,
+          responseMode: 'onReceived',
+          secret: '{{$vars.WEBHOOK_SECRET}}'
+        },
+        position: [240, 300]
+      },
+      {
+        id: 'clay-enrich',
+        name: 'Clay Company Enrichment',
+        type: 'n8n-nodes-base.httpRequest',
+        parameters: {
+          method: 'POST',
+          url: 'https://api.clay.com/v1/enrichment/company',
+          authentication: 'predefinedCredentialType',
+          headers: { 'X-Api-Key': '{{$vars.CLAY_API_KEY}}' },
+          body: {
+            domain: '={{$json.domain}}',
+            fields: ['company_name','employee_count','industry','description','linkedin_url','tech_stack','funding_stage']
+          }
+        },
+        position: [460, 300]
+      },
+      {
+        id: 'apollo-search',
+        name: 'Apollo Person Search',
+        type: 'n8n-nodes-base.httpRequest',
+        parameters: {
+          method: 'POST',
+          url: 'https://api.apollo.io/v1/mixed_people/search',
+          headers: { 'X-Api-Key': '{{$vars.APOLLO_API_KEY}}' },
+          body: {
+            q_organization_domains: ['={{$json.domain}}'],
+            person_titles: allTitles.length ? allTitles : ['ceo','founder','vp sales','head of sales'],
+            person_seniorities: [d.seniority !== 'any' ? d.seniority : 'senior'],
+            per_page: parseInt(d.maxContacts) || 2
+          }
+        },
+        position: [680, 300]
+      },
+      {
+        id: 'hunter-verify',
+        name: 'Hunter Email Verification',
+        type: 'n8n-nodes-base.httpRequest',
+        parameters: {
+          method: 'GET',
+          url: 'https://api.hunter.io/v2/email-verifier',
+          qs: { email: '={{$json.email}}', api_key: '{{$vars.HUNTER_API_KEY}}' }
+        },
+        position: [900, 300]
+      },
+      {
+        id: 'claude-firstline',
+        name: 'Claude — Generate First Line',
+        type: 'n8n-nodes-base.httpRequest',
+        parameters: {
+          method: 'POST',
+          url: 'https://api.anthropic.com/v1/messages',
+          headers: {
+            'x-api-key': '{{$vars.ANTHROPIC_API_KEY}}',
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json'
+          },
+          body: {
+            model: 'claude-opus-4-5',
+            max_tokens: 200,
+            system: tonePrompt,
+            messages: [{
+              role: 'user',
+              content: `Company: {{$json.company_name}}\nDescription: {{$json.description}}\nContact: {{$json.person_name}}, {{$json.person_title}}\nIndustry: {{$json.industry}}\n\nWrite ONE personalised opening line for a cold email. Max 20 words.`
+            }]
+          }
+        },
+        position: [1120, 300]
+      },
+      {
+        id: 'claude-sequence',
+        name: 'Claude — Write 5-Email Sequence',
+        type: 'n8n-nodes-base.httpRequest',
+        parameters: {
+          method: 'POST',
+          url: 'https://api.anthropic.com/v1/messages',
+          headers: {
+            'x-api-key': '{{$vars.ANTHROPIC_API_KEY}}',
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json'
+          },
+          body: {
+            model: 'claude-opus-4-5',
+            max_tokens: 2000,
+            system: tonePrompt,
+            messages: [{
+              role: 'user',
+              content: `Write a 5-email B2B cold outreach sequence for:\nCompany: ${d.company || '{{company}}'}\nContact: {{$json.person_name}}, {{$json.person_title}}\nValue props:\n${vpText}\nCTA: ${d.primaryCTA || 'book a call'}\nCTA URL: ${d.ctaUrl || '[CAL_LINK]'}\nSocial proof: ${d.socialProof || '[ADD PROOF]'}\nSender: ${d.senderName || '[SENDER]'}\n\nReturn as JSON array with fields: subject, body, delay_days for each email.`
+            }]
+          }
+        },
+        position: [1340, 300]
+      },
+      {
+        id: 'instantly-add',
+        name: 'Instantly — Add to Sequence',
+        type: 'n8n-nodes-base.httpRequest',
+        parameters: {
+          method: 'POST',
+          url: 'https://api.instantly.ai/api/v1/lead/add',
+          headers: { Authorization: 'Bearer {{$vars.INSTANTLY_API_KEY}}' },
+          body: {
+            api_key: '{{$vars.INSTANTLY_API_KEY}}',
+            campaign_id: '{{$vars.INSTANTLY_CAMPAIGN_ID}}',
+            skip_if_in_workspace: true,
+            leads: [{
+              email: '={{$json.email}}',
+              first_name: '={{$json.first_name}}',
+              last_name: '={{$json.last_name}}',
+              company_name: '={{$json.company_name}}',
+              custom_variables: {
+                first_line: '={{$json.first_line}}',
+                pain: '={{$json.selected_pain}}',
+                solution: '={{$json.selected_solution}}'
+              }
+            }]
+          }
+        },
+        position: [1560, 300]
+      },
+      {
+        id: 'airtable-update',
+        name: 'Airtable — Update Lead Record',
+        type: 'n8n-nodes-base.airtable',
+        parameters: {
+          operation: 'update',
+          baseId: '{{$vars.AIRTABLE_BASE_ID}}',
+          tableId: 'Leads',
+          id: '={{$json.airtable_record_id}}',
+          fields: {
+            Status: 'Enriched',
+            'Contact Name': '={{$json.person_name}}',
+            'Contact Email': '={{$json.email}}',
+            'Contact Title': '={{$json.person_title}}',
+            'Enrichment Date': '={{$now}}',
+            'First Line': '={{$json.first_line}}',
+            'Sequence Status': 'Active'
+          }
+        },
+        position: [1780, 300]
+      }
+    ],
+    connections: {
+      'webhook-trigger':   { main: [[ {node:'clay-enrich',   type:'main', index:0} ]] },
+      'clay-enrich':       { main: [[ {node:'apollo-search',  type:'main', index:0} ]] },
+      'apollo-search':     { main: [[ {node:'hunter-verify',  type:'main', index:0} ]] },
+      'hunter-verify':     { main: [[ {node:'claude-firstline',type:'main',index:0} ]] },
+      'claude-firstline':  { main: [[ {node:'claude-sequence', type:'main',index:0} ]] },
+      'claude-sequence':   { main: [[ {node:'instantly-add',   type:'main',index:0} ]] },
+      'instantly-add':     { main: [[ {node:'airtable-update', type:'main',index:0} ]] },
+    },
+    settings: { executionOrder: 'v1' },
+    soldiroConfig: {
+      client:      d.company,
+      domain:      d.domain,
+      createdAt:   new Date().toISOString(),
+      version:     '1.0.0',
+      icp: {
+        companySize:    d.companySize,
+        geography:      d.geography,
+        industries:     d.icpIndustries,
+        keywords:       d.icpKeywords,
+        exclusions:     d.icpExclusions,
+      },
+      targeting: {
+        primaryTitles:   d.primaryTitles,
+        secondaryTitles: d.secondaryTitles,
+        seniority:       d.seniority,
+        maxContacts:     d.maxContacts,
+      },
+      tone:          d.tone,
+      valuePros:     d.valuePros,
+      cta:           d.primaryCTA,
+      ctaUrl:        d.ctaUrl,
+    },
+    pinData: {}
+  };
+}
+
+function buildTonePrompt(d) {
+  const toneMap = {
+    direct:       'You are a sharp, direct B2B sales copywriter. No fluff. Short sentences. Respect the reader\'s time. No more than 80 words per email.',
+    consultative: 'You are a consultative sales expert. Lead with insight about their world before introducing a solution. Show you understand their challenges deeply.',
+    friendly:     'You write warm, conversational cold emails that feel human and approachable. Avoid corporate language. Write like a smart person who happens to have a relevant solution.',
+    challenger:   'You write challenger-style cold emails that open with a counterintuitive insight or provocative question. High-confidence, thought-provoking tone.',
+    'data-driven':'You write data-driven cold emails leading with statistics, benchmarks, and ROI language. Quantify every claim.',
+    storytelling: 'You write story-led cold emails that open with a brief customer narrative or "we worked with a company just like yours" framing to build credibility.',
+  };
+  const base = toneMap[d.tone] || toneMap.direct;
+  const custom = d.toneInstructions ? `\n\nAdditional instructions: ${d.toneInstructions}` : '';
+  const sender = d.senderName ? `\n\nSign off as: ${d.senderName}${d.signatureLine ? ' · ' + d.signatureLine : ''}` : '';
+  return base + custom + sender;
+}
+
+function buildAirtableSchema(d) {
+  return {
+    soldiroClient: d.company,
+    createdAt: new Date().toISOString(),
+    tables: [
+      {
+        name: 'Leads',
+        description: 'Raw and enriched lead records',
+        fields: [
+          { name: 'Company Domain', type: 'singleLineText', required: true },
+          { name: 'Company Name',   type: 'singleLineText' },
+          { name: 'Industry',       type: 'singleLineText' },
+          { name: 'Company Size',   type: 'singleLineText' },
+          { name: 'Status',         type: 'singleSelect',
+            options: ['Raw','Processing','Enriched','No Email','Bounced','Active','Replied','Qualified','Meeting Booked','Won','Lost'] },
+          { name: 'Contact Name',   type: 'singleLineText' },
+          { name: 'Contact Email',  type: 'email' },
+          { name: 'Contact Title',  type: 'singleLineText' },
+          { name: 'LinkedIn URL',   type: 'url' },
+          { name: 'Enrichment Date',type: 'dateTime' },
+          { name: 'Source',         type: 'singleLineText' },
+          { name: 'ICP Match Score',type: 'number' },
+          { name: 'Notes',          type: 'multilineText' },
+        ]
+      },
+      {
+        name: 'Outreach',
+        description: 'Email sequence tracking per contact',
+        fields: [
+          { name: 'Lead',           type: 'link', linkedTable: 'Leads' },
+          { name: 'First Line',     type: 'multilineText' },
+          { name: 'Sequence Status',type: 'singleSelect',
+            options: ['Draft','Active','Paused','Completed','Bounced','Opted Out'] },
+          { name: 'Emails Sent',    type: 'number' },
+          { name: 'Opens',          type: 'number' },
+          { name: 'Clicks',         type: 'number' },
+          { name: 'Replies',        type: 'number' },
+          { name: 'Last Sent Date', type: 'dateTime' },
+          { name: 'Instantly Lead ID', type: 'singleLineText' },
+          { name: 'Tone Used',      type: 'singleLineText', default: d.tone },
+          { name: 'Value Prop Used',type: 'singleLineText' },
+        ]
+      },
+      {
+        name: 'Conversations',
+        description: 'Replies and BANT qualification',
+        fields: [
+          { name: 'Lead',           type: 'link', linkedTable: 'Leads' },
+          { name: 'Reply Text',     type: 'multilineText' },
+          { name: 'Reply Date',     type: 'dateTime' },
+          { name: 'Sentiment',      type: 'singleSelect', options: ['Positive','Neutral','Negative','Unsubscribe'] },
+          { name: 'BANT Score',     type: 'number' },
+          { name: 'Budget',         type: 'singleSelect', options: ['Confirmed','Likely','Unclear','None'] },
+          { name: 'Authority',      type: 'singleSelect', options: ['Decision Maker','Influencer','Unknown'] },
+          { name: 'Need',           type: 'singleSelect', options: ['High','Medium','Low','None'] },
+          { name: 'Timeline',       type: 'singleSelect', options: ['<30 days','30-90 days','90+ days','Unknown'] },
+          { name: 'Claude Summary', type: 'multilineText' },
+          { name: 'Qualified',      type: 'checkbox' },
+        ]
+      },
+      {
+        name: 'Meetings',
+        description: 'Booked calls and outcomes',
+        fields: [
+          { name: 'Lead',           type: 'link', linkedTable: 'Leads' },
+          { name: 'Meeting Date',   type: 'dateTime' },
+          { name: 'Cal.com Event ID',type: 'singleLineText' },
+          { name: 'Status',         type: 'singleSelect', options: ['Scheduled','Completed','No Show','Rescheduled','Cancelled'] },
+          { name: 'Outcome',        type: 'singleSelect', options: ['Won','Lost','Follow Up','Not Qualified'] },
+          { name: 'Deal Value',     type: 'number' },
+          { name: 'Notes',          type: 'multilineText' },
+        ]
+      },
+      {
+        name: 'Config',
+        description: 'Client configuration and ICP settings',
+        fields: [
+          { name: 'Key', type: 'singleLineText' },
+          { name: 'Value', type: 'multilineText' },
+          { name: 'Last Updated', type: 'dateTime' },
+        ],
+        initialRecords: [
+          { Key: 'client_name',       Value: d.company },
+          { Key: 'client_domain',     Value: d.domain },
+          { Key: 'icp_industries',    Value: d.icpIndustries.join(', ') },
+          { Key: 'icp_company_size',  Value: d.companySize },
+          { Key: 'icp_geography',     Value: d.geography },
+          { Key: 'target_titles',     Value: [...d.primaryTitles,...d.secondaryTitles].join(', ') },
+          { Key: 'tone',              Value: d.tone },
+          { Key: 'sender_name',       Value: d.senderName },
+          { Key: 'cta_url',           Value: d.ctaUrl },
+          { Key: 'social_proof',      Value: d.socialProof },
+          { Key: 'value_props',       Value: d.valuePros.map(v=>`${v.pain} → ${v.solution}`).join('\n') },
+        ]
+      },
+      {
+        name: 'Performance',
+        description: 'Weekly KPI roll-up',
+        fields: [
+          { name: 'Week',             type: 'dateTime' },
+          { name: 'Leads Enriched',   type: 'number' },
+          { name: 'Emails Sent',      type: 'number' },
+          { name: 'Replies',          type: 'number' },
+          { name: 'Reply Rate',       type: 'formula', formula: '{Replies}/{Emails Sent}' },
+          { name: 'Meetings Booked',  type: 'number' },
+          { name: 'Meeting Rate',     type: 'formula', formula: '{Meetings Booked}/{Emails Sent}' },
+          { name: 'Cost This Week',   type: 'currency' },
+          { name: 'Cost Per Lead',    type: 'formula', formula: '{Cost This Week}/{Leads Enriched}' },
+        ]
+      }
+    ]
+  };
+}
+
+function syntaxHighlight(obj) {
+  const json = JSON.stringify(obj, null, 2);
+  return json
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+      let cls = 'num';
+      if (/^"/.test(match)) cls = /:$/.test(match) ? 'key' : 'str';
+      else if (/true|false/.test(match)) cls = 'bool';
+      else if (/null/.test(match)) cls = 'cmt';
+      return `<span class="${cls}">${match}</span>`;
+    });
+}
+
+function buildOutput() {
+  const d = collect();
+
+  // Summary pills
+  const allTitles = [...d.primaryTitles, ...d.secondaryTitles];
+  document.getElementById('sumTitles').textContent = allTitles.length || '—';
+  document.getElementById('sumVPs').textContent = d.valuePros.length || '—';
+  const keysSet = ['clay','apollo','hunter','instantly','airtable'].filter(k => getKey(k).length > 8).length;
+  document.getElementById('sumAPIs').textContent = keysSet + '/5';
+
+  // Checklist
+  const checks = [
+    { done: !!d.company && !!d.domain,                        label: `Client: ${d.company || 'Not set'} (${d.domain || 'no domain'})` },
+    { done: d.icpIndustries.length > 0 || !!d.companySize,   label: 'ICP configured' },
+    { done: d.primaryTitles.length > 0,                       label: `${d.primaryTitles.length} primary titles defined`,
+      warn: d.primaryTitles.length === 0 },
+    { done: d.valuePros.length >= 3,                          label: `${d.valuePros.length} value props (3+ recommended)`,
+      warn: d.valuePros.length > 0 && d.valuePros.length < 3 },
+    { done: getKey('clay').length > 8,                        label: 'Clay API key configured', warn: getKey('clay').length === 0 },
+    { done: getKey('apollo').length > 8,                      label: 'Apollo API key configured', warn: getKey('apollo').length === 0 },
+    { done: getKey('hunter').length > 8,                      label: 'Hunter API key configured', warn: getKey('hunter').length === 0 },
+    { done: getKey('instantly').length > 8,                   label: 'Instantly API key configured', warn: getKey('instantly').length === 0 },
+    { done: getKey('airtable').length > 8,                    label: 'Airtable API key configured', warn: getKey('airtable').length === 0 },
+    { done: !!d.ctaUrl,                                        label: d.ctaUrl ? `CTA URL: ${d.ctaUrl}` : 'CTA URL not set (recommended)',
+      warn: !d.ctaUrl },
+  ];
+
+  const cl = document.getElementById('deployChecklist');
+  cl.innerHTML = '<div class="checklist-title">Pre-deploy checklist</div>';
+  checks.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'check-item ' + (c.done ? 'done' : c.warn ? 'warn' : '');
+    div.innerHTML = `<span class="check-icon">${c.done ? '✓' : c.warn ? '⚠' : '○'}</span>${c.label}`;
+    cl.appendChild(div);
+  });
+
+  // Previews
+  const n8nConfig = buildN8NConfig(d);
+  const atSchema  = buildAirtableSchema(d);
+
+  document.getElementById('n8nPreview').innerHTML = syntaxHighlight(n8nConfig).substring(0, 3000) + '\n<span class="cmt">... (full JSON in download)</span>';
+  document.getElementById('airtablePreview').innerHTML = syntaxHighlight(atSchema).substring(0, 3000) + '\n<span class="cmt">... (full JSON in download)</span>';
+}
+
+/* ═══════════════════════════════════════════
+   DOWNLOADS
+═══════════════════════════════════════════ */
+function download(filename, content) {
+  const blob = new Blob([content], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇', `${filename} downloaded`);
+}
+
+/* ═══════════════════════════════════════════
+   SECURE API KEY HANDLING
+═══════════════════════════════════════════ */
+let createdBaseId = null;
+
+function buildSecureN8NConfig(d) {
+  const allTitles = [...(d.primaryTitles||[]), ...(d.secondaryTitles||[])];
+  const tonePrompt = buildTonePrompt(d);
+  const vpText = (d.valuePros||[]).map((v,i)=>`VP${i+1}: "${v.pain}" → "${v.solution}"`).join('\n');
+
+  const config = {
+    meta: { instanceId: 'soldiro-' + Date.now(), client: d.company||'client', generated: new Date().toISOString() },
+    name: `Soldiro AI — ${d.company||'Client'} Outbound`,
+    nodes: [
+      { id:'webhook-trigger', name:'Receive New Raw Lead', type:'n8n-nodes-base.webhook',
+        parameters:{ httpMethod:'POST', path:`soldiro-${(d.company||'client').toLowerCase().replace(/\s+/g,'-')}`, responseMode:'onReceived', secret:'{{$vars.WEBHOOK_SECRET}}' }, position:[240,300] },
+      { id:'clay-enrich', name:'Clay Company Enrichment', type:'n8n-nodes-base.httpRequest',
+        parameters:{ method:'POST', url:'https://api.clay.com/v1/enrichment/company', authentication:'genericCredentialType', credentialType:'httpHeaderAuth',
+          header:{ name:'X-API-Key', value:'{{$vars.CLAY_API_KEY}}' },
+          body:{ domain:'={{$json.domain}}', fields:['company_name','employee_count','industry','description','linkedin_url','tech_stack','funding_stage'] } }, position:[460,300] },
+      { id:'apollo-search', name:'Apollo Person Search', type:'n8n-nodes-base.httpRequest',
+        parameters:{ method:'POST', url:'https://api.apollo.io/v1/mixed_people/search', authentication:'genericCredentialType', credentialType:'httpHeaderAuth',
+          header:{ name:'X-Api-Key', value:'{{$vars.APOLLO_API_KEY}}' },
+          body:{ q_organization_domains:['={{$json.domain}}'], person_titles:allTitles.length?allTitles:['ceo','founder','vp sales'], per_page:parseInt(d.maxContacts)||2 } }, position:[680,300] },
+      { id:'hunter-verify', name:'Hunter Email Verification', type:'n8n-nodes-base.httpRequest',
+        parameters:{ method:'GET', url:'https://api.hunter.io/v2/email-verifier', authentication:'genericCredentialType', credentialType:'queryAuth',
+          queryParameters:{ parameters:[{ name:'api_key', value:'{{$vars.HUNTER_API_KEY}}' }] } }, position:[900,300] },
+      { id:'claude-firstline', name:'Claude — Generate First Line', type:'n8n-nodes-base.httpRequest',
+        parameters:{ method:'POST', url:'https://api.anthropic.com/v1/messages', authentication:'genericCredentialType', credentialType:'httpHeaderAuth',
+          header:{ name:'x-api-key', value:'{{$vars.ANTHROPIC_API_KEY}}' },
+          body:{ model:'claude-opus-4-5', max_tokens:200, system:tonePrompt,
+            messages:[{ role:'user', content:'Company: {{$json.company_name}}\nPerson: {{$json.person_name}}, {{$json.person_title}}\nWrite ONE personalized opening line. Max 20 words.' }] } }, position:[1120,300] },
+      { id:'claude-sequence', name:'Claude — Write 5-Email Sequence', type:'n8n-nodes-base.httpRequest',
+        parameters:{ method:'POST', url:'https://api.anthropic.com/v1/messages', authentication:'genericCredentialType', credentialType:'httpHeaderAuth',
+          header:{ name:'x-api-key', value:'{{$vars.ANTHROPIC_API_KEY}}' },
+          body:{ model:'claude-opus-4-5', max_tokens:2000, system:tonePrompt,
+            messages:[{ role:'user', content:`Write a 5-email sequence.\nClient: ${d.company||'{{company}}'}\nValue props:\n${vpText}\nCTA: ${d.primaryCTA||'book a call'} — ${d.ctaUrl||'[CAL_LINK]'}\nSocial proof: ${d.socialProof||'[ADD_PROOF]'}\nReturn as JSON array: [{subject, body, delay_days}]` }] } }, position:[1340,300] },
+      { id:'instantly-add', name:'Instantly — Add to Sequence', type:'n8n-nodes-base.httpRequest',
+        parameters:{ method:'POST', url:'https://api.instantly.ai/api/v1/lead/add', authentication:'genericCredentialType', credentialType:'httpHeaderAuth',
+          header:{ name:'Authorization', value:'Bearer {{$vars.INSTANTLY_API_KEY}}' },
+          body:{ campaign_id:'{{$vars.INSTANTLY_CAMPAIGN_ID}}', skip_if_in_workspace:true,
+            leads:[{ email:'={{$json.email}}', first_name:'={{$json.first_name}}', company_name:'={{$json.company_name}}',
+              custom_variables:{ first_line:'={{$json.first_line}}' } }] } }, position:[1560,300] },
+      { id:'airtable-update', name:'Airtable — Update Lead Record', type:'n8n-nodes-base.airtable',
+        parameters:{ operation:'update', authentication:'genericCredentialType', credentialType:'airtableApi',
+          credentials:{ apiKey:'{{$vars.AIRTABLE_API_KEY}}' },
+          baseId: createdBaseId || '{{$vars.AIRTABLE_BASE_ID}}', tableId:'Leads',
+          fields:{ Status:'Enriched', 'Contact Email':'={{$json.email}}', 'First Line':'={{$json.first_line}}', 'Sequence Status':'Active' } }, position:[1780,300] }
+    ],
+    connections:{
+      'webhook-trigger':{ main:[[{node:'clay-enrich',type:'main',index:0}]] },
+      'clay-enrich':{ main:[[{node:'apollo-search',type:'main',index:0}]] },
+      'apollo-search':{ main:[[{node:'hunter-verify',type:'main',index:0}]] },
+      'hunter-verify':{ main:[[{node:'claude-firstline',type:'main',index:0}]] },
+      'claude-firstline':{ main:[[{node:'claude-sequence',type:'main',index:0}]] },
+      'claude-sequence':{ main:[[{node:'instantly-add',type:'main',index:0}]] },
+      'instantly-add':{ main:[[{node:'airtable-update',type:'main',index:0}]] }
+    },
+    settings:{ executionOrder:'v1', errorWorkflow:'{{$vars.ERROR_WORKFLOW_ID}}' },
+    soldiroConfig:{
+      client:d.company, domain:d.domain, createdAt:new Date().toISOString(), version:'2.0.0',
+      icp:{ companySize:d.companySize, geography:d.geography, industries:d.icpIndustries, keywords:d.icpKeywords, exclusions:d.icpExclusions },
+      targeting:{ primaryTitles:d.primaryTitles, secondaryTitles:d.secondaryTitles, seniority:d.seniority, maxContacts:d.maxContacts },
+      tone:d.tone, valuePros:d.valuePros, cta:d.primaryCTA, ctaUrl:d.ctaUrl,
+      ...(createdBaseId ? { airtableBaseId:createdBaseId, airtableBaseUrl:`https://airtable.com/${createdBaseId}` } : {})
+    },
+    pinData:{}
+  };
+  return config;
+}
+
+function generateEnvFile(d) {
+  const keys = {
+    CLAY_API_KEY:         getKey('clay'),
+    APOLLO_API_KEY:       getKey('apollo'),
+    HUNTER_API_KEY:       getKey('hunter'),
+    INSTANTLY_API_KEY:    getKey('instantly'),
+    AIRTABLE_API_KEY:     getKey('airtable'),
+    ANTHROPIC_API_KEY:    '',
+    CALCOM_API_KEY:       getKey('cal'),
+    INSTANTLY_CAMPAIGN_ID:'your_campaign_id_here',
+    AIRTABLE_BASE_ID:     createdBaseId || 'your_base_id_here',
+    WEBHOOK_SECRET:       generateSecret(32),
+    ERROR_WORKFLOW_ID:    'your_error_workflow_id',
+    CLIENT_NAME:          d.company||'',
+    CLIENT_DOMAIN:        d.domain||'',
+    GENERATED_DATE:       new Date().toISOString()
+  };
+  let env = '# Soldiro AI — Environment Variables\n';
+  env += `# Generated: ${new Date().toLocaleString()}\n`;
+  env += '# SECURITY: Never commit this file to git. Add to .gitignore.\n\n';
+  Object.entries(keys).forEach(([k,v]) => {
+    env += v ? `${k}="${v.replace(/([\"\\])/g,'\\$1')}"\n` : `# ${k}="your_${k.toLowerCase()}_here"\n`;
+  });
+  return env;
+}
+
+function generateSetupInstructions(d, hasEncryption) {
+  return `SOLDIRO AI — DEPLOYMENT PACKAGE
+════════════════════════════════════════
+
+Client: ${d.company||'Your Company'}
+Generated: ${new Date().toLocaleString()}
+Version: 2.0.0
+
+━━ FILES IN THIS PACKAGE ━━━━━━━━━━━━━━
+1. *-workflow.json         n8n workflow (all keys masked as {{$vars.*}})
+2. *-airtable-schema.json  Airtable base structure (no keys)
+3. .env                    Environment variables (KEEP SECURE — never share)
+${hasEncryption ? '4. *.encrypted             AES-256 encrypted API secrets\n' : ''}
+━━ SECURITY NOTES ━━━━━━━━━━━━━━━━━━━━
+• The n8n workflow contains ZERO real API keys
+• Real keys go into n8n Settings → Environment Variables
+• NEVER commit .env to git — add it to .gitignore
+${hasEncryption ? '• Decrypt secrets: openssl enc -d -aes-256-cbc -in *.enc -out secrets.json\n' : ''}
+━━ DEPLOYMENT STEPS ━━━━━━━━━━━━━━━━━━
+STEP 1: Import workflow
+  • Open n8n → Import → Choose *-workflow.json
+
+STEP 2: Add environment variables
+  • n8n → Settings → Environment Variables
+  • Add all keys from your .env file
+  • Required: CLAY_API_KEY, APOLLO_API_KEY, HUNTER_API_KEY,
+              INSTANTLY_API_KEY, AIRTABLE_API_KEY, ANTHROPIC_API_KEY
+  • Optional: CALCOM_API_KEY, INSTANTLY_CAMPAIGN_ID, AIRTABLE_BASE_ID
+
+STEP 3: Set up Airtable
+  • Create a new base named "${d.company||'Soldiro AI'}"
+  • Import schema from *-airtable-schema.json
+  • Copy Base ID → paste into AIRTABLE_BASE_ID in n8n
+
+STEP 4: Configure Instantly
+  • Create campaign → Copy Campaign ID → set INSTANTLY_CAMPAIGN_ID
+
+STEP 5: Test
+  • Add a test lead with status "Queued"
+  • Run workflow manually, verify enrichment
+  • Then activate
+
+━━ CONFIGURATION SUMMARY ━━━━━━━━━━━━━
+• Target Titles: ${(d.primaryTitles||[]).length} primary + ${(d.secondaryTitles||[]).length} secondary
+• Value Props: ${(d.valuePros||[]).length} pain-solution pairs
+• Tone: ${d.tone||'direct'}
+• ICP Industries: ${(d.icpIndustries||[]).join(', ')||'Not specified'}
+• Geography: ${d.geography||'Global'}
+
+━━ SUPPORT ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• soldiro.ai/docs
+• support@soldiro.ai
+`;
+}
+
+function generateSecret(len=32) {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+  const vals = crypto.getRandomValues(new Uint8Array(len));
+  return Array.from(vals, v => chars[v % chars.length]).join('');
+}
+
+/* ── Web Crypto AES-256-GCM encryption ── */
+async function encryptWithPassword(text, password) {
+  const enc = new TextEncoder();
+  const keyMat = await crypto.subtle.importKey('raw', enc.encode(password), {name:'PBKDF2'}, false, ['deriveKey']);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv   = crypto.getRandomValues(new Uint8Array(12));
+  const key  = await crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'},
+    keyMat, {name:'AES-GCM', length:256}, false, ['encrypt']
+  );
+  const encrypted = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(text));
+  const out = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+  out.set(salt,0); out.set(iv,salt.length); out.set(new Uint8Array(encrypted), salt.length+iv.length);
+  return btoa(String.fromCharCode(...out));
+}
+
+/* ── Password Modal flow ── */
+let _resolveEncrypt = null;
+
+function showPasswordModal() {
+  return new Promise(resolve => {
+    _resolveEncrypt = resolve;
+    document.getElementById('passwordModal').style.display = 'flex';
+    document.getElementById('encryptPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    document.getElementById('modalError').style.display = 'none';
+    setTimeout(() => document.getElementById('encryptPassword').focus(), 100);
+  });
+}
+
+function closePasswordModal(password) {
+  document.getElementById('passwordModal').style.display = 'none';
+  if (_resolveEncrypt) { _resolveEncrypt(password); _resolveEncrypt = null; }
+}
+
+async function confirmEncryption() {
+  const pw  = document.getElementById('encryptPassword').value;
+  const pw2 = document.getElementById('confirmPassword').value;
+  const err = document.getElementById('modalError');
+  if (pw.length < 8) { err.textContent='Password must be at least 8 characters'; err.style.display='block'; return; }
+  if (pw !== pw2)    { err.textContent='Passwords do not match'; err.style.display='block'; return; }
+  closePasswordModal(pw);
+}
+
+/* ── Zip downloader ── */
+async function downloadAsZip(filename, files) {
+  if (window.JSZip) {
+    const zip = new JSZip();
+    files.forEach(f => zip.file(f.name, f.content));
+    const blob = await zip.generateAsync({type:'blob'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download=filename; a.click();
+    URL.revokeObjectURL(url);
+  } else {
+    files.forEach(f => dlFile(f.name, f.content));
+  }
+}
+
+/* ── Memory-safe file downloader ── */
+const createdUrls = [];
+
+function dlFile(filename, content) {
+  const blob = new Blob([content], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  createdUrls.push(url);
+  const a = document.createElement('a');
+  a.href=url; a.download=filename; a.click();
+  // Revoke after 60s — enough time for browser to initiate download
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    const i = createdUrls.indexOf(url);
+    if (i > -1) createdUrls.splice(i, 1);
+  }, 60000);
+}
+
+/* ── Secure download functions ── */
+async function secureDownloadAll(e) {
+  const btn = (e instanceof Event ? e.target : null) || document.querySelector('.dl-btn.primary');
+  const originalHTML = btn?.innerHTML;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="dl-icon">⏳</span> Generating…'; }
+
+  try {
+    const d = collect();
+    const name = (d.company||'client').toLowerCase().replace(/\s+/g,'-');
+    showToast('🔐','Preparing secure package…');
+    analytics.track('download_start', { type:'secure', step:currentStep });
+
+    // Ask for encryption password via modal
+    const password = await showPasswordModal();
+    let encryptedContent = null;
+
+    if (password) {
+      try {
+        const secrets = { clay:getKey('clay'), apollo:getKey('apollo'), hunter:getKey('hunter'),
+          instantly:getKey('instantly'), airtable:getKey('airtable'), cal:getKey('cal'),
+          client:d.company, generated:Date.now() };
+        Object.keys(secrets).forEach(k => { if (!secrets[k]) delete secrets[k]; });
+        encryptedContent = await encryptWithPassword(JSON.stringify(secrets,null,2), password);
+      } catch(err) {
+        showToast('❌','Encryption failed — downloading without encryption', true);
+      }
+    }
+
+    const files = [
+      { name:`soldiro-${name}-workflow.json`,       content:JSON.stringify(buildSecureN8NConfig(d),null,2) },
+      { name:`soldiro-${name}-airtable-schema.json`,content:JSON.stringify(buildAirtableSchema(d),null,2) },
+      { name:`.env`,                                content:generateEnvFile(d) },
+      { name:`SETUP-INSTRUCTIONS.txt`,              content:generateSetupInstructions(d, !!encryptedContent) }
+    ];
+    if (encryptedContent) files.push({ name:`soldiro-${name}-secrets.encrypted`, content:encryptedContent });
+
+    await downloadAsZip(`soldiro-${name}-package.zip`, files);
+    analytics.track('download_complete', { type:'secure', encrypted:!!encryptedContent });
+    showToast('🔐','Secure package downloaded — keys masked as {{$vars.*}}');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = originalHTML; }
+  }
+}
+
+function downloadN8N() {
+  const d = collect();
+  const config = buildSecureN8NConfig(d);
+  const name = (d.company||'client').toLowerCase().replace(/\s+/g,'-');
+  dlFile(`soldiro-${name}-workflow.json`, JSON.stringify(config,null,2));
+  showToast('⚙️','Workflow downloaded — keys are masked');
+}
+
+function downloadAirtable() {
+  const d = collect();
+  const schema = buildAirtableSchema(d);
+  const name = (d.company||'client').toLowerCase().replace(/\s+/g,'-');
+  dlFile(`soldiro-${name}-airtable-schema.json`, JSON.stringify(schema,null,2));
+  showToast('📋','Airtable schema downloaded');
+}
+
+function downloadEnv() {
+  const d = collect();
+  const env = generateEnvFile(d);
+  const name = (d.company||'client').toLowerCase().replace(/\s+/g,'-');
+  dlFile(`soldiro-${name}.env.txt`, env);
+  showToast('🔑','Environment template downloaded — keep this secure');
+}
+
+function download(filename, content) { dlFile(filename, content); }
+
+/* ═══════════════════════════════════════════
+   LOCALSTORAGE AUTO-SAVE WITH VERSIONING
+═══════════════════════════════════════════ */
+const STORAGE_CONFIG = {
+  AUTO_SAVE_DELAY: 2000,
+  MAX_HISTORY: 20,
+  STORAGE_KEY:   'soldiro_onboarding',
+  HISTORY_KEY:   'soldiro_history',
+  VERSION_KEY:   'soldiro_version',
+  LAST_EDIT_KEY: 'soldiro_last_edit'
+};
+
+let autoSaveTimer = null;
+let lastSavedState = null;
+
+class Version {
+  constructor(data, description='Auto-save') {
+    this.id = Date.now() + '-' + Math.random().toString(36).substr(2,9);
+    this.timestamp = new Date().toISOString();
+    this.description = description;
+    this.data = JSON.parse(JSON.stringify(data));
+    this.size = JSON.stringify(this.data).length;
+    this.step = currentStep;
+    this.clientName = data?.formData?.company || data?.company || 'Untitled';
+  }
+}
+
+function collectCompleteState() {
+  try {
+    const formData = collect();
+    return {
+      formData,
+      uiState: {
+        currentStep, selectedTone,
+        vpItems: [...vpItems],
+        tags: {
+          icpIndustries:  [...(tags.icpIndustries||[])],
+          icpKeywords:    [...(tags.icpKeywords||[])],
+          icpExclusions:  [...(tags.icpExclusions||[])],
+          primaryTitles:  [...(tags.primaryTitles||[])],
+          secondaryTitles:[...(tags.secondaryTitles||[])],
+          titleExclusions:[...(tags.titleExclusions||[])]
+        }
+      },
+      metadata: { lastEdit: new Date().toISOString(), version: Date.now() }
+    };
+  } catch(e) { console.error('State collect error:', e); return null; }
+}
+
+/* ── Debounce utility ── */
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => { clearTimeout(timeout); func(...args); };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+const debouncedSave = debounce((desc) => saveCurrentState(desc), STORAGE_CONFIG.AUTO_SAVE_DELAY);
+
+function triggerAutoSave(description='Auto-save') {
+  debouncedSave(description);
+  updateAutosaveBadge('saving');
+}
+
+function saveCurrentState(description='Manual save') {
+  try {
+    const state = collectCompleteState();
+    if (!state) return false;
+    const stateHash = JSON.stringify(state);
+    if (stateHash === lastSavedState) return false;
+    const version = new Version(state, description);
+    localStorage.setItem(STORAGE_CONFIG.STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_CONFIG.VERSION_KEY, version.id);
+    localStorage.setItem(STORAGE_CONFIG.LAST_EDIT_KEY, new Date().toISOString());
+    saveToHistory(version);
+    lastSavedState = stateHash;
+    showAutoSaveIndicator(version);
+    updateAutosaveBadge('saved');
+    analytics.track('save', { step: currentStep, description });
+    return true;
+  } catch(e) {
+    console.error('Auto-save failed:', e);
+    showToast('⚠️','Auto-save failed — storage might be full', true);
+    return false;
+  }
+}
+
+function updateAutosaveBadge(state) {
+  const badge = document.getElementById('autosaveBadge');
+  const label = document.getElementById('autosaveLabel');
+  if (!badge || !label) return;
+  if (state === 'saved') {
+    badge.classList.add('saved');
+    label.textContent = 'Saved';
+  } else {
+    badge.classList.remove('saved');
+    label.textContent = 'Saving…';
+  }
+}
+
+function saveToHistory(version) {
+  try {
+    let history = [];
+    const stored = localStorage.getItem(STORAGE_CONFIG.HISTORY_KEY);
+    if (stored) { try { history = JSON.parse(stored); } catch(e) { history=[]; } }
+    history.unshift({ id:version.id, timestamp:version.timestamp, description:version.description, step:version.step, clientName:version.clientName, size:version.size });
+    if (history.length > STORAGE_CONFIG.MAX_HISTORY) {
+      history = history.slice(0, STORAGE_CONFIG.MAX_HISTORY);
+      cleanupOldVersions(history);
+    }
+    localStorage.setItem(`version_${version.id}`, JSON.stringify(version.data));
+    localStorage.setItem(STORAGE_CONFIG.HISTORY_KEY, JSON.stringify(history));
+  } catch(e) { console.error('History save failed:', e); }
+}
+
+function cleanupOldVersions(history) {
+  const keepIds = new Set(history.map(v=>v.id));
+  for (let i=localStorage.length-1; i>=0; i--) {
+    const key = localStorage.key(i);
+    if (key?.startsWith('version_') && !keepIds.has(key.replace('version_',''))) {
+      localStorage.removeItem(key);
+    }
+  }
+}
+
+function setValue(id, value) {
+  const el = document.getElementById(id);
+  if (el && value != null) el.value = value;
+}
+
+function restoreFormData(formData) {
+  if (!formData) return;
+  ['companyName','companyDomain','clientName','clientEmail','industry','stage','companyDesc',
+   'companySize','geography','revenue','fundingStage','seniority','maxContacts',
+   'toneInstructions','senderName','signatureLine','primaryCTA','ctaUrl','socialProof']
+    .forEach(id => setValue(id, formData[{
+      companyName:'company', companyDomain:'domain', clientName:'contactName',
+      clientEmail:'contactEmail'
+    }[id] || id]));
+  syncClientBadge();
+
+  ['icpIndustries','icpKeywords','icpExclusions','primaryTitles','secondaryTitles','titleExclusions'].forEach(key => {
+    if (formData[key]) { tags[key] = formData[key]; renderTags(key); }
+  });
+  if (formData.valuePros) { vpItems = formData.valuePros.filter(v=>v.pain||v.solution); renderVPs(); }
+  showToast('🔑','API keys need re-entry for security');
+}
+
+function restoreUIState(uiState) {
+  if (!uiState) return;
+  if (typeof uiState.currentStep === 'number') {
+    const panels = document.querySelectorAll('.step-panel');
+    panels[currentStep]?.classList.remove('active');
+    currentStep = uiState.currentStep;
+    panels[currentStep]?.classList.add('active');
+    updateRailState();
+  }
+  if (uiState.selectedTone) {
+    selectedTone = uiState.selectedTone;
+    document.querySelectorAll('.tone-card').forEach(card => {
+      const m = card.getAttribute('onclick')?.match(/'([^']+)'/);
+      card.classList.toggle('selected', m && m[1] === selectedTone);
+    });
+  }
+  if (uiState.tags) {
+    Object.entries(uiState.tags).forEach(([k,v]) => { tags[k]=v; renderTags(k); });
+  }
+  if (uiState.vpItems) { vpItems = uiState.vpItems; renderVPs(); }
+}
+
+function updateRailState() {
+  document.querySelectorAll('.step-item').forEach((item,i) => {
+    item.classList.remove('active','done');
+    const num = document.getElementById('num-'+i);
+    if (!num) return;
+    if (i < currentStep) { item.classList.add('done'); num.classList.add('check'); num.textContent='✓'; }
+    else if (i === currentStep) { item.classList.add('active'); num.classList.remove('check'); num.textContent=i+1; }
+    else { num.classList.remove('check'); num.textContent=i+1; }
+  });
+}
+
+function restoreState(versionId) {
+  try {
+    const raw = localStorage.getItem(`version_${versionId}`);
+    if (!raw) { showToast('❌','Version not found',true); return false; }
+    const state = JSON.parse(raw);
+    restoreFormData(state.formData || state);
+    restoreUIState(state.uiState);
+    updateUI();
+    if (currentStep===6) buildOutput();
+    showToast('🔄',`Restored — ${new Date(state.metadata?.lastEdit||Date.now()).toLocaleString()}`);
+    return true;
+  } catch(e) { console.error('Restore failed:',e); showToast('❌','Restore failed',true); return false; }
+}
+
+function loadSavedState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_CONFIG.STORAGE_KEY);
+    const lastEdit = localStorage.getItem(STORAGE_CONFIG.LAST_EDIT_KEY);
+    if (saved && lastEdit) {
+      const mins = Math.round((Date.now()-new Date(lastEdit))/60000);
+      if (confirm(`You have unsaved work from ${mins} minute${mins===1?'':'s'} ago. Restore it?`)) {
+        const state = JSON.parse(saved);
+        restoreFormData(state.formData);
+        restoreUIState(state.uiState);
+        updateRailState();
+        showToast('💾','Draft restored');
+      } else {
+        localStorage.removeItem(STORAGE_CONFIG.STORAGE_KEY);
+      }
+    }
+  } catch(e) { console.error('Load saved state failed:',e); }
+}
+
+function showAutoSaveIndicator(version) {
+  const existing = document.getElementById('autoSaveIndicator');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'autoSaveIndicator';
+  el.style.cssText = `position:fixed;bottom:100px;right:24px;background:var(--surface2);border:1px solid var(--goldring);border-radius:30px;padding:7px 14px;font-family:var(--font-m);font-size:11px;color:var(--gold2);display:flex;align-items:center;gap:8px;z-index:999;animation:slideUp 0.3s ease;box-shadow:0 4px 12px rgba(0,0,0,0.3)`;
+  el.innerHTML = `<span>💾</span><span>Auto-saved</span><button onclick="toggleHistoryPanel()" style="background:var(--goldfade);border:1px solid var(--goldring);color:var(--gold);border-radius:4px;padding:2px 8px;font-size:9px;cursor:pointer;font-family:var(--font-m)">History</button>`;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.animation='fadeOut 0.3s ease forwards'; setTimeout(()=>el.remove(),300); }, 3000);
+}
+
+/* ── History panel ── */
+function toggleHistoryPanel() {
+  const existing = document.getElementById('historyPanel');
+  if (existing) { existing.remove(); return; }
+  const history = JSON.parse(localStorage.getItem(STORAGE_CONFIG.HISTORY_KEY)||'[]');
+  if (!history.length) { showToast('📭','No saved versions yet'); return; }
+
+  const panel = document.createElement('div');
+  panel.id = 'historyPanel';
+  panel.style.cssText = `position:fixed;top:70px;right:24px;width:360px;max-height:500px;background:var(--surface2);border:1px solid var(--goldring);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.5);z-index:1000;overflow:hidden;font-family:var(--font-b);animation:slideIn 0.2s ease`;
+
+  const hdr = document.createElement('div');
+  hdr.style.cssText = `padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface)`;
+  hdr.innerHTML = `<div><span style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--gold)">📋 Version History</span><span style="font-family:var(--font-m);font-size:10px;color:var(--muted);margin-left:8px">${history.length}/${STORAGE_CONFIG.MAX_HISTORY}</span></div><button onclick="document.getElementById('historyPanel').remove()" style="background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer">✕</button>`;
+  panel.appendChild(hdr);
+
+  const list = document.createElement('div');
+  list.style.cssText = `max-height:360px;overflow-y:auto;padding:6px`;
+  history.forEach((v,i) => {
+    const d = new Date(v.timestamp);
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.style.cssText = `padding:11px 13px;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;margin:2px 0;${i===0?'background:var(--goldfade)':''}`;
+    item.onclick = () => restoreVersion(v.id);
+    item.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--font-d);font-weight:600;color:var(--text);font-size:13px">${v.clientName}</span><span style="font-family:var(--font-m);font-size:9px;color:var(--gold2)">Step ${v.step+1}</span></div><div style="display:flex;justify-content:space-between"><span style="font-family:var(--font-m);font-size:10px;color:var(--text2)">${v.description}</span><span style="font-family:var(--font-m);font-size:9px;color:var(--muted)">${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span></div>`;
+    list.appendChild(item);
+  });
+  panel.appendChild(list);
+
+  const ftr = document.createElement('div');
+  ftr.style.cssText = `padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--surface)`;
+  ftr.innerHTML = `<button onclick="exportAllVersions()" style="flex:1;padding:8px;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:6px;cursor:pointer;font-family:var(--font-m);font-size:10px">⬇ Export Backup</button><button onclick="clearHistory()" style="flex:1;padding:8px;background:transparent;border:1px solid rgba(232,75,106,0.3);color:var(--red);border-radius:6px;cursor:pointer;font-family:var(--font-m);font-size:10px">🗑 Clear All</button>`;
+  panel.appendChild(ftr);
+  document.body.appendChild(panel);
+}
+
+function restoreVersion(id) {
+  if (confirm('Restore this version? Unsaved changes will be lost.')) {
+    restoreState(id);
+    document.getElementById('historyPanel')?.remove();
+  }
+}
+
+function exportAllVersions() {
+  const history = JSON.parse(localStorage.getItem(STORAGE_CONFIG.HISTORY_KEY)||'[]');
+  const versions = history.map(v => { const d=localStorage.getItem(`version_${v.id}`); return d?JSON.parse(d):null; }).filter(Boolean);
+  dlFile(`soldiro-backup-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify({ exported:new Date().toISOString(), history, versions },null,2));
+  showToast('💾','Version history exported');
+  document.getElementById('historyPanel')?.remove();
+}
+
+function importVersions() {
+  const input = document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.onchange = async e => {
+    try {
+      const text = await e.target.files[0].text();
+      const data = JSON.parse(text);
+      if (confirm(`Import ${data.history?.length||0} versions?`)) {
+        const existing = JSON.parse(localStorage.getItem(STORAGE_CONFIG.HISTORY_KEY)||'[]');
+        const merged = [...(data.history||[]), ...existing].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,STORAGE_CONFIG.MAX_HISTORY);
+        localStorage.setItem(STORAGE_CONFIG.HISTORY_KEY, JSON.stringify(merged));
+        (data.versions||[]).forEach(v => { const ver=new Version(v,'Imported'); localStorage.setItem(`version_${ver.id}`,JSON.stringify(v)); });
+        showToast('✅',`Imported ${data.history?.length||0} versions`);
+      }
+    } catch(e) { showToast('❌','Invalid backup file',true); }
+  };
+  input.click();
+}
+
+function clearHistory() {
+  if (!confirm('Delete ALL version history? Cannot be undone.')) return;
+  for (let i=localStorage.length-1;i>=0;i--) {
+    const k=localStorage.key(i);
+    if (k?.startsWith('version_')) localStorage.removeItem(k);
+  }
+  [STORAGE_CONFIG.HISTORY_KEY, STORAGE_CONFIG.VERSION_KEY].forEach(k=>localStorage.removeItem(k));
+  showToast('🗑','History cleared');
+  document.getElementById('historyPanel')?.remove();
+}
+
+/* ── Auto-save event listeners ── */
+function setupAutoSaveListeners() {
+  ['companyName','companyDomain','clientName','clientEmail','industry','stage','companyDesc',
+   'companySize','geography','revenue','fundingStage','toneInstructions','senderName',
+   'signatureLine','primaryCTA','ctaUrl','socialProof','seniority','maxContacts'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input',  ()=>triggerAutoSave('Form update'));
+      el.addEventListener('change', ()=>triggerAutoSave('Selection change'));
+    }
+  });
+  ['icpIndustries','icpKeywords','icpExclusions','primaryTitles','secondaryTitles','titleExclusions'].forEach(key=>{
+    document.getElementById(key+'Input')?.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===',') setTimeout(()=>triggerAutoSave('Tag added'),100);
+    });
+  });
+  ['clay','apollo','hunter','instantly','cal','airtable'].forEach(s=>{
+    document.getElementById('key-'+s)?.addEventListener('input',()=>triggerAutoSave('API key updated'));
+  });
+  document.querySelectorAll('.tone-card').forEach(c=>c.addEventListener('click',()=>triggerAutoSave('Tone changed')));
+  new MutationObserver(()=>triggerAutoSave('VP updated')).observe(document.getElementById('vpList'),{childList:true,subtree:true,characterData:true});
+  document.getElementById('btnNext')?.addEventListener('click',()=>saveCurrentState('Step advanced'));
+  document.getElementById('btnBack')?.addEventListener('click',()=>saveCurrentState('Step returned'));
+}
+
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); saveCurrentState('Manual save (Ctrl+S)'); showToast('💾','Saved'); }
+    if ((e.ctrlKey||e.metaKey) && e.key==='h') { e.preventDefault(); toggleHistoryPanel(); }
+    if ((e.ctrlKey||e.metaKey) && e.shiftKey && e.key==='z') {
+      e.preventDefault();
+      const history=JSON.parse(localStorage.getItem(STORAGE_CONFIG.HISTORY_KEY)||'[]');
+      if (history.length>1) restoreState(history[1].id);
+    }
+  });
+}
+
+/* ── Version ── */
+const APP_VERSION = '2.1.0';
+
+/* ── Privacy-first local analytics ── */
+const analytics = {
+  events: JSON.parse(localStorage.getItem('soldiro_analytics') || '[]'),
+  track(event, data={}) {
+    this.events.push({ event, timestamp: new Date().toISOString(), data });
+    localStorage.setItem('soldiro_analytics', JSON.stringify(this.events.slice(-100)));
+  },
+  export() {
+    dlFile(`soldiro-analytics-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(this.events, null, 2));
+    showToast('📊', 'Analytics exported');
+  }
+};
+
+/* ── Theme toggle ── */
+const LIGHT_THEME = { '--bg':'#f4f3f7','--surface':'#ffffff','--surface2':'#f0eef8','--border':'#dddae8','--border2':'#ccc9dc','--text':'#1a1820','--text2':'#4e4b6a','--muted':'#9996b3' };
+const DARK_THEME  = { '--bg':'#07070a','--surface':'#0d0d16','--surface2':'#111119','--border':'#1e1e2e','--border2':'#28283c','--text':'#eae6f5','--text2':'#9990b8','--muted':'#3e3c5a' };
+let _isDark = true;
+
+function toggleTheme() {
+  _isDark = !_isDark;
+  const theme = _isDark ? DARK_THEME : LIGHT_THEME;
+  const root = document.documentElement;
+  Object.entries(theme).forEach(([k,v]) => root.style.setProperty(k, v));
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = _isDark ? '☀️' : '🌙';
+  localStorage.setItem('soldiro_theme', _isDark ? 'dark' : 'light');
+  analytics.track('theme_toggle', { theme: _isDark ? 'dark' : 'light' });
+}
+
+function loadSavedTheme() {
+  const saved = localStorage.getItem('soldiro_theme');
+  if (saved === 'light') { _isDark = true; toggleTheme(); }
+}
+
+/* ── Export options modal ── */
+function showExportOptions() {
+  // Remove any existing
+  document.querySelector('.export-modal')?.remove();
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay export-modal';
+  modal.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-title">📦 Export Options</div>
+      <p class="modal-desc">Choose how to package your Soldiro AI configuration.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0">
+        <button onclick="secureDownloadAll();closeExportModal()" class="modal-btn-encrypt">🔐 Secure ZIP Package<br><span style="font-size:10px;opacity:0.7;font-family:var(--font-m)">Encrypted secrets + .env + instructions</span></button>
+        <button onclick="downloadSeparate();closeExportModal()" class="modal-btn-skip">📄 Separate Files<br><span style="font-size:10px;opacity:0.7;font-family:var(--font-m)">No zip — each file individually</span></button>
+        <button onclick="downloadN8N();closeExportModal()" class="modal-btn-skip">⚙️ Workflow Only<br><span style="font-size:10px;opacity:0.7;font-family:var(--font-m)">n8n JSON, keys masked</span></button>
+        <button onclick="downloadAirtable();closeExportModal()" class="modal-btn-skip">📋 Airtable Only<br><span style="font-size:10px;opacity:0.7;font-family:var(--font-m)">Schema JSON, no keys</span></button>
+      </div>
+      <div style="display:flex;justify-content:flex-end">
+        <button onclick="closeExportModal()" class="modal-btn-skip" style="min-width:80px">Cancel</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  analytics.track('export_modal_opened');
+}
+
+function closeExportModal() {
+  document.querySelector('.export-modal')?.remove();
+}
+
+function downloadSeparate() {
+  const d = collect();
+  downloadN8N();
+  setTimeout(() => downloadAirtable(), 300);
+  setTimeout(() => downloadEnv(), 600);
+  analytics.track('download_separate');
+}
+
+/* ── Backup reminder (once per day) ── */
+function checkBackupReminder() {
+  const lastBackup = localStorage.getItem('last_backup_reminder');
+  const today = new Date().toDateString();
+  if (lastBackup !== today) {
+    localStorage.setItem('last_backup_reminder', today);
+    setTimeout(() => {
+      // Non-blocking toast instead of confirm() for better UX
+      const t = document.getElementById('toast');
+      if (!t) return;
+      document.getElementById('toastIcon').textContent = '💾';
+      document.getElementById('toastMsg').textContent = 'Remember to back up your config today';
+      t.style.borderColor = 'var(--goldring)'; t.style.color = 'var(--gold)';
+      t.style.cursor = 'pointer';
+      t.onclick = () => { showExportOptions(); t.classList.remove('show'); t.onclick=null; };
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => { t.classList.remove('show'); t.onclick=null; }, 8000);
+    }, 12000);
+  }
+}
+
+function initAutoSave() {
+  loadSavedState();
+  setupAutoSaveListeners();
+  setupKeyboardShortcuts();
+  setupGlobalUX();
+  loadSavedTheme();
+  checkBackupReminder();
+  analytics.track('session_start', { step: currentStep, version: APP_VERSION });
+  // Clean up all blob URLs on page unload
+  window.addEventListener('beforeunload', () => {
+    createdUrls.forEach(url => URL.revokeObjectURL(url));
+    saveCurrentState('Page exit');
+  });
+  setTimeout(()=>saveCurrentState('Initial draft'), 5000);
+  setInterval(()=>saveCurrentState('Periodic backup'), 300000);
+}
+
+/* ── Global UX enhancements ── */
+function setupGlobalUX() {
+  // Escape closes any modal or history panel
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none');
+      document.getElementById('historyPanel')?.remove();
+    }
+  });
+
+  // Click outside modal overlay to close
+  document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) {
+      e.target.style.display = 'none';
+      if (_resolveEncrypt) closePasswordModal(null);
+    }
+  });
+
+  // Click output-code panels to select all text for easy copy
+  document.querySelectorAll('.output-code').forEach(el => {
+    el.title = 'Click to select all';
+    el.style.cursor = 'text';
+    el.addEventListener('click', () => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+  });
+
+  // Add version badge to bottom bar step info
+  const stepInfo = document.getElementById('stepInfo');
+  if (stepInfo) {
+    const vbadge = document.createElement('span');
+    vbadge.style.cssText = `margin-left:16px;font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:1px`;
+    vbadge.textContent = `v${APP_VERSION}`;
+    stepInfo.appendChild(vbadge);
+  }
+
+  // Add theme toggle + export options to nav
+  const navBadge = document.querySelector('.nav-client-badge');
+  if (navBadge && !document.getElementById('themeToggleBtn')) {
+    const themeBtn = document.createElement('button');
+    themeBtn.id = 'themeToggleBtn';
+    themeBtn.textContent = '☀️';
+    themeBtn.title = 'Toggle light/dark mode';
+    themeBtn.style.cssText = `background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:13px;transition:all 0.15s`;
+    themeBtn.onclick = toggleTheme;
+    navBadge.insertBefore(themeBtn, navBadge.firstChild);
+  }
+
+  // Tooltips for nav icon-only buttons
+  document.querySelectorAll('[onclick="toggleHistoryPanel()"]').forEach(b => b.title = 'Version history (Ctrl+H)');
+  document.querySelectorAll('[onclick="importVersions()"]').forEach(b => b.title = 'Import saved backup');
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function showToast(icon, msg, isWarn) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  t.style.borderColor = isWarn ? 'rgba(232,75,106,0.3)' : 'var(--goldring)';
+  t.style.color = isWarn ? 'var(--red)' : 'var(--gold)';
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+initVPs();
+updateUI();
+initAutoSave();
+</script>
+</body>
+</html>
