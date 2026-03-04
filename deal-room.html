@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soldiro AI — Deal Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #07070a;
+      --surface:   #0d0d16;
+      --surface2:  #111119;
+      --surface3:  #181825;
+      --surface4:  #1e1e2e;
+      --border:    #1e1e2e;
+      --border2:   #2a2a3a;
+      --border3:   #38384e;
+      --gold:      #e8b84b;
+      --gold2:     #c49030;
+      --gold3:     #f5d07a;
+      --goldfade:  rgba(232,184,75,0.07);
+      --goldring:  rgba(232,184,75,0.18);
+      --red:       #e84b6a;
+      --redfade:   rgba(232,75,106,0.09);
+      --green:     #2ecc8a;
+      --greenfade: rgba(46,204,138,0.09);
+      --blue:      #4a8fff;
+      --bluefade:  rgba(74,143,255,0.09);
+      --purple:    #9b6dff;
+      --purpfade:  rgba(155,109,255,0.09);
+      --amber:     #ffb347;
+      --amberfade: rgba(255,179,71,0.09);
+      --teal:      #2eccd5;
+      --tealfade:  rgba(46,204,213,0.09);
+      --text:      #eae6f5;
+      --text2:     #a9a1c2;
+      --text3:     #6a6380;
+      --muted:     #43405c;
+      --font-d:    'Barlow Condensed', sans-serif;
+      --font-b:    'Sora', sans-serif;
+      --font-m:    'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; }
+    body { background:var(--bg); color:var(--text); font-family:var(--font-b); font-size:14px; line-height:1.5; overflow:hidden; }
+
+    /* ══ SHELL ══ */
+    .shell { display:grid; grid-template-columns:260px 1fr; grid-template-rows:52px 1fr; height:100vh; }
+
+    /* ══ TOPNAV ══ */
+    .topnav { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:0 24px; background:var(--surface); border-bottom:1px solid var(--border); z-index:20; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand-mark { background:var(--gold); color:var(--bg); font-family:var(--font-d); font-weight:800; font-size:14px; width:26px; height:26px; border-radius:5px; display:flex; align-items:center; justify-content:center; }
+    .brand-name { font-family:var(--font-d); font-size:16px; font-weight:700; }
+    .topnav-center { display:flex; align-items:center; gap:8px; }
+    .deal-badge { font-family:var(--font-m); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; padding:4px 12px; border-radius:20px; background:var(--goldfade); border:1px solid var(--goldring); color:var(--gold); display:flex; align-items:center; gap:6px; }
+    .deal-pulse { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse-green 2s ease-in-out infinite; }
+    @keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(46,204,138,0.4)} 50%{box-shadow:0 0 0 5px rgba(46,204,138,0)} }
+    .tn-btn { padding:6px 14px; border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:var(--font-m); font-size:10px; letter-spacing:0.5px; text-transform:uppercase; border-radius:6px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+    .tn-btn:hover { border-color:var(--gold2); color:var(--gold); }
+    .tn-btn.gold { background:var(--gold); border-color:var(--gold); color:var(--bg); }
+    .tn-btn.gold:hover { background:var(--gold3); }
+    .tn-btn.red { background:transparent; border-color:rgba(232,75,106,0.4); color:var(--red); }
+    .tn-btn.red:hover { background:var(--redfade); border-color:var(--red); }
+    .tn-btn:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+
+    /* ══ DEAL LIST SIDEBAR ══ */
+    .deal-sidebar { background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+    .ds-header { padding:14px 16px 10px; border-bottom:1px solid var(--border); flex-shrink:0; }
+    .ds-title { font-family:var(--font-d); font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+    .ds-pipe-val { font-family:var(--font-d); font-size:13px; font-weight:700; color:var(--green); }
+    .ds-search { width:100%; background:var(--bg); border:1px solid var(--border2); border-radius:7px; padding:7px 11px; color:var(--text); font-family:var(--font-m); font-size:11px; outline:none; transition:border-color 0.15s; }
+    .ds-search:focus { border-color:var(--gold2); }
+    .ds-search::placeholder { color:var(--muted); }
+    .stage-filters { display:flex; gap:4px; margin-top:8px; overflow-x:auto; scrollbar-width:none; }
+    .stage-filters::-webkit-scrollbar { display:none; }
+    .sf-pill { padding:3px 9px; border:1px solid var(--border2); border-radius:12px; font-family:var(--font-m); font-size:8px; letter-spacing:0.5px; text-transform:uppercase; color:var(--text3); cursor:pointer; transition:all 0.12s; white-space:nowrap; flex-shrink:0; }
+    .sf-pill:hover { border-color:var(--gold2); color:var(--text2); }
+    .sf-pill.active { background:var(--goldfade); border-color:var(--goldring); color:var(--gold); }
+    .ds-list { flex:1; overflow-y:auto; padding:8px 0; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; }
+
+    /* Deal list item */
+    .deal-item { padding:11px 14px; cursor:pointer; border-left:3px solid transparent; transition:all 0.15s; position:relative; }
+    .deal-item:hover { background:var(--goldfade); }
+    .deal-item.active { background:rgba(232,184,75,0.05); border-left-color:var(--gold); }
+    .di-top { display:flex; align-items:center; gap:9px; margin-bottom:6px; }
+    .di-logo { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-size:12px; font-weight:800; flex-shrink:0; border:1px solid var(--border2); }
+    .di-name { font-family:var(--font-d); font-size:14px; font-weight:700; color:var(--text); flex:1; }
+    .di-value { font-family:var(--font-d); font-size:13px; font-weight:700; color:var(--green); }
+    .di-stage { font-family:var(--font-m); font-size:8px; letter-spacing:0.5px; padding:2px 7px; border-radius:3px; border:1px solid; text-transform:uppercase; }
+    .di-conf-row { display:flex; align-items:center; gap:7px; }
+    .di-conf-bar { flex:1; height:3px; background:var(--border2); border-radius:2px; overflow:hidden; }
+    .di-conf-fill { height:100%; border-radius:2px; transition:width 1s; }
+    .di-conf-pct { font-family:var(--font-m); font-size:9px; color:var(--text3); }
+    .di-next { font-family:var(--font-m); font-size:9px; color:var(--text3); margin-top:4px; }
+    .di-urgent { position:absolute; top:11px; right:12px; width:7px; height:7px; border-radius:50%; animation:pulse-green 2s infinite; }
+
+    /* ══ MAIN DEAL AREA ══ */
+    .deal-main { display:grid; grid-template-columns:280px 1fr 280px; overflow:hidden; }
+
+    /* ── Deal Card ── */
+    .deal-card-col { background:var(--surface2); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; }
+    .dc-header { padding:14px 16px 12px; border-bottom:1px solid var(--border); background:var(--surface3); flex-shrink:0; }
+    .dc-company-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .dc-logo { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-size:16px; font-weight:800; border:1px solid var(--border2); flex-shrink:0; }
+    .dc-company { font-family:var(--font-d); font-size:20px; font-weight:800; color:var(--text); }
+    .dc-industry { font-family:var(--font-m); font-size:9px; color:var(--text3); }
+    .dc-value { font-family:var(--font-d); font-size:36px; font-weight:800; color:var(--gold); line-height:1; }
+    .dc-value-sub { font-family:var(--font-m); font-size:9px; color:var(--text3); margin-bottom:10px; }
+
+    .conf-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; font-family:var(--font-m); font-size:10px; color:var(--text3); }
+    .conf-bar { height:6px; background:var(--border2); border-radius:3px; overflow:hidden; margin-bottom:10px; }
+    .conf-fill { height:100%; border-radius:3px; transition:width 1s; }
+
+    .dc-stage-track { display:flex; align-items:center; gap:0; margin-bottom:12px; }
+    .stage-node { display:flex; flex-direction:column; align-items:center; position:relative; }
+    .sn-dot { width:10px; height:10px; border-radius:50%; border:2px solid var(--border2); background:var(--surface3); flex-shrink:0; transition:all 0.3s; }
+    .sn-dot.done { background:var(--green); border-color:var(--green); }
+    .sn-dot.current { background:var(--gold); border-color:var(--gold); box-shadow:0 0 0 3px rgba(232,184,75,0.2); }
+    .sn-label { font-family:var(--font-m); font-size:7px; color:var(--text3); margin-top:3px; white-space:nowrap; }
+    .sn-label.active { color:var(--gold); }
+    .stage-line { flex:1; height:2px; background:var(--border2); margin-bottom:12px; }
+    .stage-line.done { background:var(--green); }
+
+    .dc-body { padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+    .dc-field { }
+    .dcf-label { font-family:var(--font-m); font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); margin-bottom:3px; }
+    .dcf-val { font-size:12px; color:var(--text2); display:flex; align-items:center; gap:6px; }
+    .dcf-av { width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-size:10px; font-weight:800; flex-shrink:0; }
+
+    .bant-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:3px; }
+    .bant-cell { display:flex; align-items:center; gap:5px; padding:5px 8px; border-radius:5px; border:1px solid; }
+    .bant-cell.yes { background:var(--greenfade); border-color:rgba(46,204,138,0.2); }
+    .bant-cell.no  { background:var(--surface4); border-color:var(--border2); }
+    .bant-key { font-family:var(--font-m); font-size:9px; font-weight:500; }
+    .bant-cell.yes .bant-key { color:var(--green); }
+    .bant-cell.no  .bant-key { color:var(--text3); }
+    .bant-check { font-size:10px; }
+
+    .dc-actions { padding:14px 16px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+    .dc-btn { width:100%; padding:9px; border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:var(--font-m); font-size:9px; letter-spacing:0.5px; text-transform:uppercase; border-radius:7px; cursor:pointer; transition:all 0.15s; }
+    .dc-btn:hover { border-color:var(--gold2); color:var(--gold); }
+    .dc-btn.primary { background:var(--gold); border-color:var(--gold); color:var(--bg); }
+    .dc-btn.primary:hover { background:var(--gold3); }
+    .dc-btn.danger { border-color:rgba(232,75,106,0.3); color:var(--red); }
+    .dc-btn.danger:hover { border-color:var(--red); background:var(--redfade); }
+    .dc-btn:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+
+    /* ── Center: Conversation + Intel + Steps ── */
+    .deal-center { display:flex; flex-direction:column; overflow:hidden; }
+
+    /* Conversation */
+    .conv-area { display:flex; flex-direction:column; flex:1; overflow:hidden; border-bottom:1px solid var(--border); min-height:0; }
+    .conv-header { display:flex; align-items:center; justify-content:space-between; padding:10px 16px 8px; background:var(--surface3); border-bottom:1px solid var(--border); flex-shrink:0; }
+    .conv-title { font-family:var(--font-d); font-size:14px; font-weight:700; display:flex; align-items:center; gap:7px; }
+    .conv-thread-pills { display:flex; gap:5px; }
+    .ctp { padding:3px 9px; border:1px solid var(--border2); border-radius:12px; font-family:var(--font-m); font-size:9px; color:var(--text3); cursor:pointer; transition:all 0.12s; }
+    .ctp:hover { border-color:var(--gold2); color:var(--text2); }
+    .ctp.active { border-color:var(--goldring); color:var(--gold); background:var(--goldfade); }
+
+    .conv-messages { flex:1; overflow-y:auto; padding:14px 16px; display:flex; flex-direction:column; gap:12px; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; }
+
+    /* Message bubbles */
+    .msg { display:flex; gap:9px; animation:msgIn 0.25s ease both; }
+    @keyframes msgIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+    .msg.mine { flex-direction:row-reverse; }
+    .msg-av { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-size:11px; font-weight:800; flex-shrink:0; }
+    .msg-body { max-width:70%; }
+    .msg-sender { font-family:var(--font-m); font-size:9px; color:var(--text3); margin-bottom:3px; }
+    .msg.mine .msg-sender { text-align:right; color:var(--gold2); }
+    .msg-bubble { padding:10px 13px; border-radius:10px; font-size:12px; line-height:1.55; color:var(--text2); }
+    .msg.theirs .msg-bubble { background:var(--surface3); border:1px solid var(--border2); border-radius:10px 10px 10px 2px; }
+    .msg.mine .msg-bubble { background:rgba(232,184,75,0.12); border:1px solid var(--goldring); color:var(--text); border-radius:10px 10px 2px 10px; }
+    .msg-file { display:flex; align-items:center; gap:7px; margin-top:7px; padding:7px 10px; background:var(--surface2); border:1px solid var(--border2); border-radius:6px; cursor:pointer; transition:all 0.12s; }
+    .msg-file:hover { border-color:var(--gold2); }
+    .msg-file-name { font-family:var(--font-m); font-size:10px; color:var(--blue); }
+    .msg-time { font-family:var(--font-m); font-size:8px; color:var(--muted); margin-top:3px; }
+    .msg.mine .msg-time { text-align:right; }
+
+    .msg-ai { background:linear-gradient(135deg,rgba(155,109,255,0.06),rgba(232,184,75,0.06)); border:1px solid rgba(155,109,255,0.2); border-radius:10px; padding:10px 13px; margin-left:37px; }
+    .ai-label { font-family:var(--font-m); font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--purple); margin-bottom:4px; display:flex; align-items:center; gap:5px; }
+    .ai-msg-text { font-size:12px; color:var(--text2); line-height:1.55; }
+    .ai-action-row { display:flex; gap:6px; margin-top:8px; }
+    .ai-action { padding:5px 11px; border:1px solid var(--goldring); background:var(--goldfade); color:var(--gold2); font-family:var(--font-m); font-size:9px; border-radius:5px; cursor:pointer; transition:all 0.12s; }
+    .ai-action:hover { background:var(--gold); color:var(--bg); border-color:var(--gold); }
+
+    .conv-compose { padding:10px 14px; background:var(--surface2); border-top:1px solid var(--border); flex-shrink:0; }
+    .compose-row { display:flex; gap:8px; align-items:flex-end; }
+    .compose-input { flex:1; background:var(--bg); border:1px solid var(--border2); border-radius:8px; padding:9px 13px; color:var(--text); font-family:var(--font-b); font-size:12px; outline:none; transition:border-color 0.15s; resize:none; min-height:38px; max-height:100px; line-height:1.5; }
+    .compose-input:focus { border-color:var(--gold2); box-shadow:0 0 0 3px rgba(232,184,75,0.07); }
+    .compose-input::placeholder { color:var(--muted); }
+    .compose-btns { display:flex; gap:5px; flex-shrink:0; }
+    .compose-btn { width:34px; height:34px; border-radius:7px; border:1px solid var(--border2); background:transparent; color:var(--text3); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all 0.12s; }
+    .compose-btn:hover { border-color:var(--gold2); color:var(--gold); }
+    .compose-send { width:34px; height:34px; border-radius:7px; background:var(--gold); border:none; color:var(--bg); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+    .compose-send:hover { background:var(--gold3); }
+
+    /* Bottom split: Intel + Next Steps */
+    .bottom-split { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--border); flex-shrink:0; }
+
+    /* Competitive Intel */
+    .intel-col { border-right:1px solid var(--border); display:flex; flex-direction:column; max-height:230px; }
+    .intel-header { padding:9px 14px 7px; background:var(--surface3); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .intel-title { font-family:var(--font-d); font-size:13px; font-weight:700; display:flex; align-items:center; gap:6px; }
+    .intel-body { flex:1; overflow-y:auto; padding:10px 14px; display:flex; flex-direction:column; gap:7px; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; }
+    .intel-item { display:flex; align-items:flex-start; gap:8px; }
+    .ii-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+    .ii-text { font-size:11px; color:var(--text2); line-height:1.5; }
+    .ii-tag { display:inline-block; font-family:var(--font-m); font-size:8px; padding:1px 6px; border-radius:3px; border:1px solid; margin-left:5px; }
+
+    /* Next Steps */
+    .steps-col { display:flex; flex-direction:column; max-height:230px; }
+    .steps-header { padding:9px 14px 7px; background:var(--surface3); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .steps-title { font-family:var(--font-d); font-size:13px; font-weight:700; display:flex; align-items:center; gap:6px; }
+    .steps-body { flex:1; overflow-y:auto; padding:10px 14px; display:flex; flex-direction:column; gap:6px; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; }
+    .step-item { display:flex; align-items:flex-start; gap:9px; }
+    .step-cb { width:16px; height:16px; border-radius:4px; border:1.5px solid var(--border2); background:transparent; flex-shrink:0; margin-top:2px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; font-size:10px; }
+    .step-cb.checked { background:var(--green); border-color:var(--green); }
+    .step-cb:hover { border-color:var(--gold2); }
+    .step-text { flex:1; }
+    .st-title { font-size:11px; color:var(--text2); line-height:1.4; }
+    .st-title.done { text-decoration:line-through; color:var(--text3); }
+    .st-meta { font-family:var(--font-m); font-size:9px; color:var(--text3); }
+    .st-urgent { font-family:var(--font-m); font-size:8px; padding:1px 6px; border-radius:3px; background:var(--redfade); border:1px solid rgba(232,75,106,0.25); color:var(--red); }
+
+    /* ── Right: Activity Timeline ── */
+    .activity-col { background:var(--surface2); border-left:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+    .ac-header { padding:14px 16px 10px; background:var(--surface3); border-bottom:1px solid var(--border); flex-shrink:0; }
+    .ac-title { font-family:var(--font-d); font-size:14px; font-weight:700; display:flex; align-items:center; gap:7px; }
+    .ac-body { flex:1; overflow-y:auto; padding:14px 16px; scrollbar-width:thin; scrollbar-color:var(--border2) transparent; }
+    .activity-item { display:flex; gap:10px; margin-bottom:14px; }
+    .ai-line { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
+    .ai-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:3px; }
+    .ai-connector { flex:1; width:1px; background:var(--border2); margin:3px 0; min-height:20px; }
+    .ai-content { flex:1; padding-bottom:2px; }
+    .aic-title { font-size:11px; font-weight:500; color:var(--text); line-height:1.4; }
+    .aic-meta { font-family:var(--font-m); font-size:9px; color:var(--text3); margin-top:2px; }
+
+    .ac-ai-nudge { margin:0 16px 12px; background:linear-gradient(135deg,rgba(155,109,255,0.07),rgba(232,184,75,0.05)); border:1px solid rgba(155,109,255,0.2); border-radius:8px; padding:10px 12px; }
+    .nudge-label { font-family:var(--font-m); font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--purple); margin-bottom:4px; }
+    .nudge-text { font-size:11px; color:var(--text2); line-height:1.5; }
+    .nudge-btn { margin-top:7px; padding:5px 12px; background:var(--gold); border:none; color:var(--bg); font-family:var(--font-m); font-size:9px; letter-spacing:0.5px; text-transform:uppercase; border-radius:5px; cursor:pointer; transition:all 0.12s; }
+    .nudge-btn:hover { background:var(--gold3); }
+
+    /* ══ MODAL ══ */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal { background:var(--surface2); border:1px solid var(--border2); border-radius:12px; width:min(520px,90vw); box-shadow:0 24px 64px rgba(0,0,0,0.6); transform:translateY(16px) scale(0.97); transition:transform 0.25s cubic-bezier(0.22,1,0.36,1), opacity 0.25s; opacity:0; }
+    .modal-overlay.open .modal { transform:translateY(0) scale(1); opacity:1; }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--border); }
+    .modal-title { font-family:var(--font-d); font-size:20px; font-weight:800; color:var(--text); }
+    .modal-close { width:28px; height:28px; border-radius:6px; background:transparent; border:1px solid var(--border2); color:var(--text3); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.12s; }
+    .modal-close:hover { border-color:var(--red); color:var(--red); }
+    .modal-body { padding:20px; display:flex; flex-direction:column; gap:12px; max-height:60vh; overflow-y:auto; }
+    .mf-label { font-family:var(--font-m); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); margin-bottom:5px; }
+    .mf-input, .mf-select, .mf-textarea { background:var(--bg); border:1px solid var(--border2); border-radius:6px; padding:10px 13px; color:var(--text); font-family:var(--font-b); font-size:13px; outline:none; transition:border-color 0.15s; width:100%; }
+    .mf-input:focus, .mf-textarea:focus { border-color:var(--gold2); box-shadow:0 0 0 3px rgba(232,184,75,0.08); }
+    .mf-select { cursor:pointer; } .mf-select option { background:var(--surface2); }
+    .mf-textarea { resize:vertical; min-height:70px; line-height:1.5; }
+    .modal-footer { display:flex; justify-content:flex-end; gap:8px; padding:14px 20px; border-top:1px solid var(--border); }
+    .mf-cancel { padding:8px 18px; border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:var(--font-m); font-size:10px; letter-spacing:1px; text-transform:uppercase; border-radius:6px; cursor:pointer; transition:all 0.15s; }
+    .mf-confirm { padding:8px 20px; background:var(--gold); border:none; color:var(--bg); font-family:var(--font-m); font-size:10px; font-weight:500; letter-spacing:1px; text-transform:uppercase; border-radius:6px; cursor:pointer; transition:all 0.15s; }
+    .mf-confirm:hover { background:var(--gold3); }
+    .mf-cancel:focus-visible, .mf-confirm:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+
+    /* Toast */
+    .toast-container { position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+    .toast { background:var(--surface3); border:1px solid var(--border2); border-left:3px solid var(--green); border-radius:8px; padding:10px 14px; display:flex; align-items:flex-start; gap:9px; min-width:240px; max-width:320px; box-shadow:0 6px 20px rgba(0,0,0,0.5); pointer-events:all; animation:toastIn 0.3s cubic-bezier(0.22,1,0.36,1) both; }
+    .toast.leaving { animation:toastOut 0.25s ease forwards; }
+    .toast.warn { border-left-color:var(--amber); } .toast.info { border-left-color:var(--blue); } .toast.error { border-left-color:var(--red); }
+    @keyframes toastIn  { from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none} }
+    @keyframes toastOut { from{opacity:1}to{opacity:0;transform:translateX(14px)} }
+    .t-ico { font-size:13px; flex-shrink:0; } .t-ttl { font-size:11px; font-weight:600; color:var(--text); } .t-msg { font-size:10px; color:var(--text2); margin-top:1px; }
+
+    ::-webkit-scrollbar { width:3px; height:3px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+    @media (max-width:1200px) { .deal-main { grid-template-columns:260px 1fr; } .activity-col { display:none; } }
+    @media (max-width:900px) { .shell { grid-template-columns:1fr; } .deal-sidebar { display:none; } }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ══ TOPNAV ══ -->
+  <nav class="topnav" aria-label="Global navigation">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">S</div>
+      <span class="brand-name">Soldiro<span style="color:var(--gold)">AI</span></span>
+    </div>
+    <div class="topnav-center">
+      <div class="deal-badge">
+        <div class="deal-pulse" aria-hidden="true"></div>
+        Deal Room
+      </div>
+      <span id="topDealLabel" style="font-family:var(--font-m);font-size:10px;color:var(--text3)">Stripe · $250k · Negotiate</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="tn-btn" onclick="openModal('share')" aria-label="Share deal room">👥 Share Room</button>
+      <button class="tn-btn" onclick="openModal('aiCoPilot')" aria-label="AI co-pilot">✦ AI Co-Pilot</button>
+      <button class="tn-btn gold" onclick="openModal('addDeal')" aria-label="Add new deal">+ New Deal</button>
+    </div>
+  </nav>
+
+  <!-- ══ DEAL LIST ══ -->
+  <aside class="deal-sidebar" aria-label="Deal pipeline">
+    <div class="ds-header">
+      <div class="ds-title">
+        <span aria-hidden="true">⚡</span> Deal Pipeline
+        <span class="ds-pipe-val" id="totalPipe">$1.1M</span>
+      </div>
+      <input class="ds-search" type="text" placeholder="Search deals…" oninput="filterDeals(this.value)" aria-label="Search deals">
+      <div class="stage-filters" role="group" aria-label="Filter by stage">
+        <button class="sf-pill active" onclick="setStageFilter(this,'All')">All</button>
+        <button class="sf-pill" onclick="setStageFilter(this,'Qualify')">Qualify</button>
+        <button class="sf-pill" onclick="setStageFilter(this,'Discover')">Discover</button>
+        <button class="sf-pill" onclick="setStageFilter(this,'Propose')">Propose</button>
+        <button class="sf-pill" onclick="setStageFilter(this,'Negotiate')">Negotiate</button>
+        <button class="sf-pill" onclick="setStageFilter(this,'Close')">Close</button>
+      </div>
+    </div>
+    <div class="ds-list" role="list" id="dealList"></div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <div class="deal-main" id="dealMain">
+
+    <!-- ── Deal Card ── -->
+    <div class="deal-card-col" id="dealCardCol" aria-label="Deal details">
+      <!-- populated by JS -->
+    </div>
+
+    <!-- ── Center: Conversation + Intel + Steps ── -->
+    <div class="deal-center" id="dealCenter">
+
+      <!-- Conversation -->
+      <div class="conv-area">
+        <div class="conv-header">
+          <div class="conv-title"><span aria-hidden="true">💬</span> Conversation</div>
+          <div class="conv-thread-pills" role="group" aria-label="Thread filter">
+            <button class="ctp active" onclick="setThread(this,'all')" aria-pressed="true">All</button>
+            <button class="ctp" onclick="setThread(this,'email')" aria-pressed="false">Email</button>
+            <button class="ctp" onclick="setThread(this,'internal')" aria-pressed="false">Internal</button>
+            <button class="ctp" onclick="setThread(this,'ai')" aria-pressed="false">AI</button>
+          </div>
+        </div>
+        <div class="conv-messages" id="convMessages" role="log" aria-live="polite" aria-label="Conversation messages"></div>
+        <div class="conv-compose">
+          <div class="compose-row">
+            <textarea class="compose-input" id="composeInput" placeholder="Reply to Sarah Chen, or write an internal note…" rows="1" aria-label="Compose message"
+                      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+                      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+            <div class="compose-btns">
+              <button class="compose-btn" onclick="showToast('Attach','File picker opened…','info')" aria-label="Attach file">📎</button>
+              <button class="compose-btn" onclick="insertAIDraft()" aria-label="AI draft">✦</button>
+              <button class="compose-send" onclick="sendMessage()" aria-label="Send message">↑</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Intel + Next Steps -->
+      <div class="bottom-split">
+        <div class="intel-col" role="region" aria-label="Competitive intelligence">
+          <div class="intel-header">
+            <div class="intel-title"><span aria-hidden="true">📊</span> Competitive Intel</div>
+            <button class="tn-btn" style="padding:3px 9px;font-size:9px" onclick="openModal('addIntel')" aria-label="Add intel">+ Add</button>
+          </div>
+          <div class="intel-body" id="intelBody"></div>
+        </div>
+        <div class="steps-col" role="region" aria-label="Next steps">
+          <div class="steps-header">
+            <div class="steps-title"><span aria-hidden="true">✅</span> Next Steps</div>
+            <button class="tn-btn" style="padding:3px 9px;font-size:9px" onclick="openModal('addStep')" aria-label="Add next step">+ Add</button>
+          </div>
+          <div class="steps-body" id="stepsBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Activity Timeline ── -->
+    <div class="activity-col" role="complementary" aria-label="Deal activity timeline">
+      <div class="ac-header">
+        <div class="ac-title"><span aria-hidden="true">⏱</span> Activity</div>
+      </div>
+      <div class="ac-ai-nudge" role="status">
+        <div class="nudge-label">✦ AI Co-Pilot</div>
+        <div class="nudge-text" id="aiNudgeText">Sarah Chen hasn't responded in 3 days. Her last email mentioned legal review. Recommend sending a low-friction check-in today.</div>
+        <button class="nudge-btn" onclick="insertAIDraft()">Draft Reply →</button>
+      </div>
+      <div class="ac-body" id="activityBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="toast-container" id="toastContainer" role="status" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+/* ═══════════════════
+   DATA
+═══════════════════ */
+const STAGES = ['Qualify','Discover','Propose','Negotiate','Close'];
+
+const DEALS = [
+  {
+    id:1, company:'Stripe', industry:'FinTech · Payments',
+    logo:{ bg:'#635BFF', c:'#fff', i:'S' },
+    value:250000, stage:'Negotiate', confidence:45, closeDate:'Q2 2026',
+    champion:{ name:'Sarah Chen', title:'VP Revenue', av:{ bg:'#2ecc8a', c:'#000', i:'SC' } },
+    decisionMaker:{ name:'Patrick Collison', title:'CEO', av:{ bg:'#9b6dff', c:'#fff', i:'PC' } },
+    bant:{ B:true, A:true, N:true, T:false },
+    competitor:'Outreach.io', competitive:'pricing',
+    urgent:true,
+    intel:[
+      { color:'var(--red)',    tag:'Competitive', tagStyle:'background:var(--redfade);border-color:rgba(232,75,106,0.3);color:var(--red)', text:'Outreach.io seen in last 2 meetings — focus on AI differentiators and ROI.' },
+      { color:'var(--blue)',   tag:'Integration',  tagStyle:'background:var(--bluefade);border-color:rgba(74,143,255,0.3);color:var(--blue)', text:'Stripe uses Salesforce — Soldiro native integration reduces time-to-value by 60%.' },
+      { color:'var(--amber)',  tag:'Pricing',      tagStyle:'background:var(--amberfade);border-color:rgba(255,179,71,0.3);color:var(--amber)', text:'Pricing pressure expected: -15%. Counter with ROI calculator showing 3-month payback.' },
+      { color:'var(--green)',  tag:'Win Strategy', tagStyle:'background:var(--greenfade);border-color:rgba(46,204,138,0.3);color:var(--green)', text:'Focus on automation velocity, not cost. Sarah\'s team is quota-capped on manual SDR capacity.' },
+    ],
+    steps:[
+      { id:'ns1', text:'Send legal docs to Sarah',     owner:'You',      date:'Feb 24',   done:true,  urgent:false },
+      { id:'ns2', text:'Security review call with IT', owner:'James K.', date:'Fri 2pm',  done:false, urgent:true  },
+      { id:'ns3', text:'Final executive presentation', owner:'You',      date:'Tue 10am', done:false, urgent:false },
+      { id:'ns4', text:'Contract signature',           owner:'Sarah',    date:'Mar 15',   done:false, urgent:false },
+    ],
+    messages:[
+      { from:'Sarah Chen', av:{ bg:'#2ecc8a', c:'#000', i:'SC' }, text:'Hi Alex — really appreciate the case study you sent last week. Our team loved the Gamma Tech results.', time:'Feb 24 · 9:14am', type:'theirs', thread:'email' },
+      { from:'You', av:{ bg:'#e8b84b', c:'#000', i:'AX' }, text:'Happy to hear it! The numbers speak for themselves — 18 meetings in 30 days from a 500-lead sequence.', time:'Feb 24 · 9:47am', type:'mine', thread:'email' },
+      { from:'Sarah Chen', av:{ bg:'#2ecc8a', c:'#000', i:'SC' }, text:'Legal needs to review the contract before we can move forward. Can you share your standard terms and DPA?', time:'Feb 24 · 2:31pm', type:'theirs', file:'Quote_v3.pdf', thread:'email' },
+      { from:'You', av:{ bg:'#e8b84b', c:'#000', i:'AX' }, text:'Sent — just emailed the standard MSA, DPA, and the fintech-specific security annex. Also attached the case study from a similar deal we closed last month.', time:'Feb 24 · 3:02pm', type:'mine', thread:'email' },
+      { from:'AI Co-Pilot', av:{ bg:'#9b6dff', c:'#fff', i:'✦' }, text:'Sarah has gone quiet for 3 days after your legal docs were sent. This is common at this stage — legal is reviewing. Recommend a light-touch check-in: "Hey Sarah, just checking the docs landed ok — happy to set up a quick call with our legal team if that would help speed things up."', time:'Just now', type:'ai', thread:'ai' },
+    ],
+    activity:[
+      { dot:'var(--green)',  title:'Contract docs sent to Sarah Chen', meta:'Feb 24 · 3:02pm · Via email' },
+      { dot:'var(--blue)',   title:'Demo call — 45 minutes', meta:'Feb 22 · 10:00am · Google Meet' },
+      { dot:'var(--gold)',   title:'Proposal v3 shared', meta:'Feb 20 · 4:15pm · PDF attachment' },
+      { dot:'var(--purple)', title:'Legal intro email sent to Patrick', meta:'Feb 19 · 11:30am · Via email' },
+      { dot:'var(--green)',  title:'Discovery call — 30 minutes', meta:'Feb 14 · 9:00am · Google Meet' },
+      { dot:'var(--blue)',   title:'Sarah Chen added as champion', meta:'Feb 12 · · Account planning' },
+      { dot:'var(--gold)',   title:'Deal created — inbound lead', meta:'Feb 10 · · Via campaign' },
+    ],
+    aiNudge:"Sarah Chen hasn't responded in 3 days. Her last email mentioned legal review. Recommend sending a low-friction check-in today."
+  },
+  {
+    id:2, company:'Vercel', industry:'DevTools · Cloud',
+    logo:{ bg:'#111', c:'#fff', i:'▲' },
+    value:150000, stage:'Propose', confidence:68, closeDate:'Q2 2026',
+    champion:{ name:'James Okafor', title:'CRO', av:{ bg:'#2ecc8a', c:'#000', i:'JO' } },
+    decisionMaker:{ name:'Guillermo Rauch', title:'CEO', av:{ bg:'#111', c:'#fff', i:'GR' } },
+    bant:{ B:true, A:true, N:true, T:true },
+    competitor:'Apollo.io',
+    urgent:true,
+    intel:[
+      { color:'var(--green)', tag:'Hot', tagStyle:'background:var(--greenfade);border-color:rgba(46,204,138,0.3);color:var(--green)', text:'"Yes please send the deck. I\'m interested. How fast can you go live?" — James Okafor, CRO.' },
+      { color:'var(--blue)',  tag:'PLG', tagStyle:'background:var(--bluefade);border-color:rgba(74,143,255,0.3);color:var(--blue)', text:'Vercel is PLG-first. Emphasize self-serve onboarding and time-to-first-sequence (<20 min).' },
+    ],
+    steps:[
+      { id:'ns5', text:'Send product deck to James', owner:'You',   date:'Today', done:false, urgent:true },
+      { id:'ns6', text:'Live sandbox demo call',     owner:'James', date:'Mar 3', done:false, urgent:false },
+    ],
+    messages:[
+      { from:'James Okafor', av:{ bg:'#2ecc8a', c:'#000', i:'JO' }, text:'Yes please send the deck. If it\'s what I think it is, I\'m interested. How fast can you go live?', time:'Today · 8:22am', type:'theirs', thread:'email' },
+    ],
+    activity:[
+      { dot:'var(--green)', title:'James Okafor replied — hot signal', meta:'Today · 8:22am' },
+      { dot:'var(--blue)',  title:'Discovery call booked', meta:'Feb 26 · 2pm' },
+    ],
+    aiNudge:"James Okafor replied this morning — BANT 4/4 confirmed. Send the deck now while the intent is hot. I've pre-drafted the follow-up email."
+  },
+  {
+    id:3, company:'Linear', industry:'DevTools · PM',
+    logo:{ bg:'#5E6AD2', c:'#fff', i:'L' },
+    value:120000, stage:'Discover', confidence:38, closeDate:'Q3 2026',
+    champion:{ name:'Aisha L.', title:'VP Sales', av:{ bg:'#2ecc8a', c:'#000', i:'AL' } },
+    decisionMaker:{ name:'Karri Väänänen', title:'CEO', av:{ bg:'#5E6AD2', c:'#fff', i:'KV' } },
+    bant:{ B:true, A:true, N:true, T:false },
+    competitor:'Lemlist',
+    urgent:false,
+    intel:[
+      { color:'var(--amber)', tag:'Objection', tagStyle:'background:var(--amberfade);border-color:rgba(255,179,71,0.3);color:var(--amber)', text:'Marcus Webb objected: "We already have Outreach." Counter: Soldiro is not a replacement — it\'s AI layered on top, tripling SDR output.' },
+      { color:'var(--gold)',  tag:'Funding',   tagStyle:'background:var(--goldfade);border-color:var(--goldring);color:var(--gold2)', text:'$50M Series B announced Feb 10 — budget very likely available. Aisha confirmed RevOps budget.' },
+    ],
+    steps:[
+      { id:'ns7', text:'Send Outreach rebuttal to Marcus', owner:'You',   date:'Today',  done:false, urgent:true },
+      { id:'ns8', text:'Champion strategy call with Aisha', owner:'You',  date:'Mar 5',  done:false, urgent:false },
+    ],
+    messages:[
+      { from:'Marcus Webb', av:{ bg:'#e84b6a', c:'#fff', i:'MW' }, text:'We already have Outreach… not sure we need another layer here.', time:'Feb 25 · 11:44am', type:'theirs', thread:'email' },
+      { from:'Aisha L.', av:{ bg:'#2ecc8a', c:'#000', i:'AL' }, text:'Marcus, let\'s hear them out. The $50M we just raised means we should be scaling SDR output 3× this quarter. Happy to connect Alex with the full eval team.', time:'Feb 25 · 12:10pm', type:'theirs', thread:'email' },
+    ],
+    activity:[
+      { dot:'var(--green)', title:'Aisha introduced evaluation team', meta:'Feb 25 · 12:10pm' },
+      { dot:'var(--red)',   title:'Objection: Outreach incumbent — Marcus Webb', meta:'Feb 25 · 11:44am' },
+    ],
+    aiNudge:"Marcus has an Outreach objection but Aisha is your champion. Send Marcus the 'Soldiro ≠ Outreach' one-pager — focus on AI qualification layer, not replacement."
+  },
+  {
+    id:4, company:'Rippling', industry:'HRTech · WorkOS',
+    logo:{ bg:'#F5A623', c:'#fff', i:'R' },
+    value:200000, stage:'Qualify', confidence:22, closeDate:'Q3 2026',
+    champion:{ name:'Elena K.', title:'VP Revenue', av:{ bg:'#4a8fff', c:'#fff', i:'EK' } },
+    decisionMaker:{ name:'Parker Conrad', title:'CEO', av:{ bg:'#F5A623', c:'#000', i:'PC' } },
+    bant:{ B:false, A:true, N:false, T:false },
+    competitor:'Clay',
+    urgent:false,
+    intel:[
+      { color:'var(--blue)', tag:'Early', tagStyle:'background:var(--bluefade);border-color:rgba(74,143,255,0.3);color:var(--blue)', text:'Early-stage deal. Elena opened intro email once. Needs 2 more touches before qualification call.' },
+    ],
+    steps:[
+      { id:'ns9', text:'Send follow-up #2 to Elena', owner:'You', date:'Mar 1', done:false, urgent:false },
+    ],
+    messages:[
+      { from:'You', av:{ bg:'#e8b84b', c:'#000', i:'AX' }, text:'Hi Elena — wanted to follow up on my email last week. Given Rippling\'s recent expansion, thought you\'d find value in how we help RevOps teams scale outbound without adding headcount.', time:'Feb 22 · 3:00pm', type:'mine', thread:'email' },
+    ],
+    activity:[
+      { dot:'var(--blue)', title:'Intro email sent to Elena K.', meta:'Feb 22 · 3:00pm' },
+      { dot:'var(--blue)', title:'Email opened once', meta:'Feb 22 · 4:12pm' },
+    ],
+    aiNudge:"Elena opened your email but hasn't replied. 1 open in 5 days suggests mild interest. Send a value-add follow-up with the Rippling-specific ROI estimate."
+  },
+];
+
+let activeDealId  = 1;
+let dealFilter    = '';
+let stageFilter   = 'All';
+let nextStates    = {};
+
+/* ═══════════════════
+   RENDER DEAL LIST
+═══════════════════ */
+const stageColors = { Qualify:'var(--text3)', Discover:'var(--blue)', Propose:'var(--purple)', Negotiate:'var(--gold)', Close:'var(--green)' };
+const stageBorders = { Qualify:'var(--border2)', Discover:'rgba(74,143,255,0.3)', Propose:'rgba(155,109,255,0.3)', Negotiate:'var(--goldring)', Close:'rgba(46,204,138,0.3)' };
+const stageBgs    = { Qualify:'transparent', Discover:'var(--bluefade)', Propose:'var(--purpfade)', Negotiate:'var(--goldfade)', Close:'var(--greenfade)' };
+
+function renderDealList() {
+  const container = document.getElementById('dealList');
+  const filtered  = DEALS.filter(d => {
+    const matchText = d.company.toLowerCase().includes(dealFilter) || d.industry.toLowerCase().includes(dealFilter);
+    const matchStage = stageFilter === 'All' || d.stage === stageFilter;
+    return matchText && matchStage;
+  });
+
+  const totalPipe = filtered.reduce((sum,d) => sum + d.value, 0);
+  document.getElementById('totalPipe').textContent = fmtMoney(totalPipe);
+
+  container.innerHTML = filtered.map(d => {
+    const confColor = d.confidence >= 60 ? 'var(--green)' : d.confidence >= 35 ? 'var(--gold)' : 'var(--red)';
+    return `
+      <div class="deal-item ${d.id === activeDealId ? 'active' : ''}"
+           onclick="loadDeal(${d.id})"
+           role="listitem"
+           aria-label="${d.company}: ${fmtMoney(d.value)}, ${d.stage}, ${d.confidence}% confidence"
+           aria-selected="${d.id === activeDealId}">
+        ${d.urgent ? `<div class="di-urgent" style="background:var(--green)" aria-label="Needs attention"></div>` : ''}
+        <div class="di-top">
+          <div class="di-logo" style="background:${d.logo.bg};color:${d.logo.c}" aria-hidden="true">${d.logo.i}</div>
+          <div>
+            <div class="di-name">${esc(d.company)}</div>
+            <div style="font-family:var(--font-m);font-size:9px;color:var(--text3)">${esc(d.industry)}</div>
+          </div>
+          <div class="di-value">${fmtMoney(d.value)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+          <span class="di-stage" style="color:${stageColors[d.stage]};border-color:${stageBorders[d.stage]};background:${stageBgs[d.stage]}">${d.stage}</span>
+          <span style="font-family:var(--font-m);font-size:9px;color:var(--text3)">Close ${d.closeDate}</span>
+        </div>
+        <div class="di-conf-row" aria-label="Confidence: ${d.confidence}%">
+          <div class="di-conf-bar"><div class="di-conf-fill" data-pct="${d.confidence}" style="background:${confColor};width:0"></div></div>
+          <div class="di-conf-pct" style="color:${confColor}">${d.confidence}%</div>
+        </div>
+        <div class="di-next">${d.champion.name} · ${d.steps.filter(s=>!s.done).length} next steps</div>
+      </div>`;
+  }).join('');
+
+  requestAnimationFrame(() => {
+    container.querySelectorAll('.di-conf-fill[data-pct]').forEach(el => { el.style.width = el.dataset.pct + '%'; });
+  });
+}
+
+function filterDeals(q)  { dealFilter = q.toLowerCase(); renderDealList(); }
+function setStageFilter(btn, f) {
+  document.querySelectorAll('.sf-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  stageFilter = f;
+  renderDealList();
+}
+
+/* ═══════════════════
+   LOAD DEAL
+═══════════════════ */
+function loadDeal(id) {
+  activeDealId = id;
+  renderDealList();
+  const d = DEALS.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('topDealLabel').textContent = `${d.company} · ${fmtMoney(d.value)} · ${d.stage}`;
+  renderDealCard(d);
+  renderConversation(d);
+  renderIntel(d);
+  renderSteps(d);
+  renderActivity(d);
+  document.getElementById('aiNudgeText').textContent = d.aiNudge;
+}
+
+/* ═══════════════════
+   DEAL CARD
+═══════════════════ */
+function renderDealCard(d) {
+  const col = document.getElementById('dealCardCol');
+  const confColor = d.confidence >= 60 ? 'var(--green)' : d.confidence >= 35 ? 'var(--gold)' : 'var(--red)';
+  const currentStageIdx = STAGES.indexOf(d.stage);
+
+  const stageTrack = STAGES.map((s, i) => {
+    const done    = i < currentStageIdx;
+    const current = i === currentStageIdx;
+    const dotCls  = done ? 'done' : current ? 'current' : '';
+    const lineCls = done ? 'done' : '';
+    return `
+      <div class="stage-node">
+        <div class="sn-dot ${dotCls}" aria-label="${s}: ${done?'done':current?'current':'pending'}"></div>
+        <div class="sn-label ${current?'active':''}">${s.slice(0,4)}</div>
+      </div>
+      ${i < STAGES.length-1 ? `<div class="stage-line ${lineCls}" aria-hidden="true"></div>` : ''}`;
+  }).join('');
+
+  col.innerHTML = `
+    <div class="dc-header">
+      <div class="dc-company-row">
+        <div class="dc-logo" style="background:${d.logo.bg};color:${d.logo.c}" aria-hidden="true">${d.logo.i}</div>
+        <div>
+          <div class="dc-company">${esc(d.company)}</div>
+          <div class="dc-industry">${esc(d.industry)}</div>
+        </div>
+      </div>
+      <div class="dc-value">${fmtMoney(d.value)}</div>
+      <div class="dc-value-sub">Deal value · Close ${esc(d.closeDate)}</div>
+      <div class="conf-row">
+        <span>Win confidence</span>
+        <span style="color:${confColor}">${d.confidence}%</span>
+      </div>
+      <div class="conf-bar" role="progressbar" aria-valuenow="${d.confidence}" aria-valuemin="0" aria-valuemax="100">
+        <div class="conf-fill" style="background:${confColor};width:${d.confidence}%"></div>
+      </div>
+      <div class="dc-stage-track" role="group" aria-label="Deal stage progression">${stageTrack}</div>
+    </div>
+    <div class="dc-body">
+      <div class="dc-field">
+        <div class="dcf-label">Champion</div>
+        <div class="dcf-val">
+          <div class="dcf-av" style="background:${d.champion.av.bg};color:${d.champion.av.c}" aria-hidden="true">${d.champion.av.i}</div>
+          ${esc(d.champion.name)} · <span style="color:var(--text3);font-size:10px">${esc(d.champion.title)}</span>
+        </div>
+      </div>
+      <div class="dc-field">
+        <div class="dcf-label">Decision Maker</div>
+        <div class="dcf-val">
+          <div class="dcf-av" style="background:${d.decisionMaker.av.bg};color:${d.decisionMaker.av.c}" aria-hidden="true">${d.decisionMaker.av.i}</div>
+          ${esc(d.decisionMaker.name)} · <span style="color:var(--text3);font-size:10px">${esc(d.decisionMaker.title)}</span>
+        </div>
+      </div>
+      <div class="dc-field">
+        <div class="dcf-label">BANT Score</div>
+        <div class="bant-grid" role="group" aria-label="BANT qualification">
+          ${Object.entries(d.bant).map(([k,v]) => `
+            <div class="bant-cell ${v?'yes':'no'}" aria-label="${k}: ${v?'confirmed':'not confirmed'}">
+              <span class="bant-check" aria-hidden="true">${v?'✓':'○'}</span>
+              <span class="bant-key">${k === 'B' ? 'Budget' : k === 'A' ? 'Authority' : k === 'N' ? 'Need' : 'Timeline'}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="dc-field">
+        <div class="dcf-label">Competitor</div>
+        <div class="dcf-val" style="color:var(--red)">⚔️ ${esc(d.competitor)}</div>
+      </div>
+    </div>
+    <div class="dc-actions">
+      <button class="dc-btn primary" onclick="openModal('updateStage',${d.id})" aria-label="Update deal stage">✏️ Update Stage</button>
+      <button class="dc-btn" onclick="openModal('nextStep',${d.id})" aria-label="Set next step">📅 Set Next Step</button>
+      <button class="dc-btn" onclick="openModal('updateConf',${d.id})" aria-label="Update confidence">📊 Update Confidence</button>
+      <button class="dc-btn danger" onclick="openModal('closeLost',${d.id})" aria-label="Mark deal as lost">✕ Mark Lost</button>
+    </div>`;
+}
+
+/* ═══════════════════
+   CONVERSATION
+═══════════════════ */
+function renderConversation(d) {
+  const container = document.getElementById('convMessages');
+  container.innerHTML = d.messages.map(m => buildMessage(m)).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function buildMessage(m) {
+  if (m.type === 'ai') {
+    return `
+      <div class="msg-ai" role="article" aria-label="AI Co-Pilot suggestion">
+        <div class="ai-label"><span aria-hidden="true">✦</span> AI Co-Pilot · ${m.time}</div>
+        <div class="ai-msg-text">${esc(m.text)}</div>
+        <div class="ai-action-row">
+          <button class="ai-action" onclick="insertAIDraft()" aria-label="Use this draft">Use Draft</button>
+          <button class="ai-action" onclick="showToast('Dismissed','AI suggestion dismissed','info')" aria-label="Dismiss suggestion">Dismiss</button>
+        </div>
+      </div>`;
+  }
+  const mine = m.type === 'mine';
+  const fileHTML = m.file ? `
+    <div class="msg-file" onclick="showToast('File','Opening ${esc(m.file)}…','info')" role="button" aria-label="Open file ${esc(m.file)}">
+      <span aria-hidden="true">📎</span>
+      <span class="msg-file-name">${esc(m.file)}</span>
+    </div>` : '';
+
+  return `
+    <div class="msg ${mine?'mine':'theirs'}" role="article" aria-label="${m.type==='mine'?'Your message':'Message from '+m.from}">
+      <div class="msg-av" style="background:${m.av.bg};color:${m.av.c}" aria-hidden="true">${m.av.i}</div>
+      <div class="msg-body">
+        <div class="msg-sender">${esc(mine ? 'You (Alex)' : m.from)}</div>
+        <div class="msg-bubble">${esc(m.text)}${fileHTML}</div>
+        <div class="msg-time">${esc(m.time)}</div>
+      </div>
+    </div>`;
+}
+
+function setThread(btn, thread) {
+  document.querySelectorAll('.ctp').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+  btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
+  showToast('Filter','Showing '+thread+' messages','info');
+}
+
+function sendMessage() {
+  const input = document.getElementById('composeInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const d = DEALS.find(x => x.id === activeDealId);
+  if (!d) return;
+  const newMsg = { from:'You', av:{ bg:'#e8b84b', c:'#000', i:'AX' }, text, time:'Just now', type:'mine', thread:'email' };
+  d.messages.push(newMsg);
+  const container = document.getElementById('convMessages');
+  const div = document.createElement('div');
+  div.innerHTML = buildMessage(newMsg);
+  container.appendChild(div.firstChild);
+  container.scrollTop = container.scrollHeight;
+  input.value = '';
+  input.style.height = 'auto';
+  showToast('Sent', 'Message sent to '+d.champion.name, 'success');
+}
+
+function insertAIDraft() {
+  const d = DEALS.find(x => x.id === activeDealId);
+  const drafts = {
+    1: "Hey Sarah, just checking the docs landed okay — happy to set up a quick 15-min call with our legal team this week if that would help speed things up. No pressure either way.",
+    2: "Hi James, sending the deck now (attached). Given your pace, I can also have a live sandbox environment ready for you in under 20 minutes. Want to do a quick async Loom walkthrough?",
+    3: "Marcus, great point on Outreach. Quick clarification: Soldiro doesn't replace Outreach — it sits on top and automates the 80% of SDR work that Outreach leaves manual. Most teams see 3× output in the first 30 days. Happy to show you a side-by-side comparison.",
+    4: "Hi Elena, wanted to share something specific to Rippling: based on your current team size and growth rate, Soldiro would generate an estimated $420k in additional pipeline per quarter. 15 minutes to walk through the model?",
+  };
+  document.getElementById('composeInput').value = drafts[activeDealId] || "Following up on our last conversation — happy to help move this forward.";
+  document.getElementById('composeInput').focus();
+  showToast('AI Draft', 'Draft loaded — review and send when ready', 'info');
+}
+
+/* ═══════════════════
+   INTEL
+═══════════════════ */
+function renderIntel(d) {
+  const body = document.getElementById('intelBody');
+  body.innerHTML = d.intel.map(it => `
+    <div class="intel-item">
+      <div class="ii-dot" style="background:${it.color}" aria-hidden="true"></div>
+      <div class="ii-text">
+        ${esc(it.text)}
+        <span class="ii-tag" style="${it.tagStyle}">${it.tag}</span>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════════════════
+   NEXT STEPS
+═══════════════════ */
+function renderSteps(d) {
+  const body = document.getElementById('stepsBody');
+  if (!nextStates[d.id]) nextStates[d.id] = {};
+  body.innerHTML = d.steps.map(s => {
+    const checked = s.done || !!nextStates[d.id][s.id];
+    return `
+      <div class="step-item" role="listitem">
+        <div class="step-cb ${checked?'checked':''}"
+             onclick="toggleStep(${d.id},'${s.id}')"
+             role="checkbox"
+             aria-checked="${checked}"
+             aria-label="Toggle: ${esc(s.text)}"
+             tabindex="0"
+             onkeydown="if(event.key===' ')toggleStep(${d.id},'${s.id}')">
+          ${checked ? '✓' : ''}
+        </div>
+        <div class="step-text">
+          <div class="st-title ${checked?'done':''}">${esc(s.text)}</div>
+          <div class="st-meta">${esc(s.owner)} · ${esc(s.date)} ${s.urgent&&!checked?`<span class="st-urgent">URGENT</span>`:''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleStep(dealId, stepId) {
+  if (!nextStates[dealId]) nextStates[dealId] = {};
+  const d    = DEALS.find(x => x.id === dealId);
+  const step = d?.steps.find(s => s.id === stepId);
+  if (!step) return;
+  if (step.done) { step.done = false; } else { nextStates[dealId][stepId] = !nextStates[dealId][stepId]; }
+  const checked = step.done || !!nextStates[dealId][stepId];
+  if (checked) showToast('Step Complete', `"${step.text}" marked done`, 'success');
+  renderSteps(d);
+}
+
+/* ═══════════════════
+   ACTIVITY
+═══════════════════ */
+function renderActivity(d) {
+  const body = document.getElementById('activityBody');
+  body.innerHTML = d.activity.map((a, i) => `
+    <div class="activity-item" role="article" aria-label="${a.title}">
+      <div class="ai-line">
+        <div class="ai-dot" style="background:${a.dot}" aria-hidden="true"></div>
+        ${i < d.activity.length-1 ? '<div class="ai-connector" aria-hidden="true"></div>' : ''}
+      </div>
+      <div class="ai-content">
+        <div class="aic-title">${esc(a.title)}</div>
+        <div class="aic-meta">${esc(a.meta)}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════════════════
+   MODALS
+═══════════════════ */
+const MODALS = {
+  addDeal: {
+    title: '+ New Deal',
+    body: () => `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div class="mf-label">Company</div><input type="text" class="mf-input" id="nd-company" placeholder="Acme Corp" aria-label="Company name"></div>
+        <div><div class="mf-label">Deal Value</div><input type="text" class="mf-input" id="nd-value" placeholder="$100,000" aria-label="Deal value"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div class="mf-label">Stage</div>
+          <select class="mf-select" aria-label="Deal stage">
+            ${STAGES.map(s => `<option>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div><div class="mf-label">Close Date</div><input type="text" class="mf-input" placeholder="Q2 2026" aria-label="Close date"></div>
+      </div>
+      <div><div class="mf-label">Champion Name</div><input type="text" class="mf-input" placeholder="Sarah Chen" aria-label="Champion name"></div>
+      <div><div class="mf-label">Decision Maker</div><input type="text" class="mf-input" placeholder="Patrick Collison" aria-label="Decision maker"></div>
+      <div><div class="mf-label">Primary Competitor</div><input type="text" class="mf-input" placeholder="Outreach.io" aria-label="Competitor"></div>`,
+    confirm: 'Create Deal Room',
+    onConfirm: () => {
+      const company = document.getElementById('nd-company')?.value?.trim();
+      if (!company) { showToast('Required','Enter a company name','warn'); return false; }
+      showToast('Deal Room Created', `${company} deal room is live`, 'success');
+    },
+  },
+  updateStage: {
+    title: 'Update Deal Stage',
+    body: (id) => {
+      const d = DEALS.find(x => x.id === id);
+      return `
+        <div><div class="mf-label">Current Stage</div>
+          <div style="font-family:var(--font-d);font-size:20px;font-weight:800;color:${stageColors[d.stage]}">${d.stage}</div>
+        </div>
+        <div><div class="mf-label">Move To</div>
+          <select class="mf-select" id="newStageSelect" aria-label="New stage">
+            ${STAGES.filter(s => s !== d.stage).map(s => `<option value="${s}">${s}</option>`).join('')}
+          </select>
+        </div>
+        <div><div class="mf-label">Stage Update Note</div>
+          <textarea class="mf-textarea" placeholder="What changed? Legal review started, proposal accepted…" aria-label="Stage update note"></textarea>
+        </div>`;
+    },
+    confirm: 'Update Stage',
+    onConfirm: (id) => {
+      const d = DEALS.find(x => x.id === id);
+      const newStage = document.getElementById('newStageSelect')?.value;
+      if (d && newStage) {
+        d.stage = newStage;
+        d.confidence = Math.min(d.confidence + 15, 95);
+        renderDealList();
+        loadDeal(id);
+        showToast('Stage Updated', `${d.company} moved to ${newStage}`, 'success');
+      }
+    },
+  },
+  updateConf: {
+    title: 'Update Win Confidence',
+    body: (id) => {
+      const d = DEALS.find(x => x.id === id);
+      return `
+        <div style="text-align:center;padding:10px 0">
+          <div style="font-family:var(--font-d);font-size:64px;font-weight:800;color:var(--gold)">${d.confidence}%</div>
+          <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">Current confidence</div>
+        </div>
+        <div><div class="mf-label">New Confidence (%)</div>
+          <input type="range" min="5" max="95" value="${d.confidence}" id="confSlider" class="mf-input" style="padding:6px"
+                 oninput="document.getElementById('confDisplay').textContent=this.value+'%'"
+                 aria-label="Confidence percentage">
+          <div id="confDisplay" style="text-align:center;font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--gold);margin-top:4px">${d.confidence}%</div>
+        </div>
+        <div><div class="mf-label">Reason for change</div>
+          <textarea class="mf-textarea" placeholder="Legal approved terms, budget confirmed…" aria-label="Reason"></textarea>
+        </div>`;
+    },
+    confirm: 'Update',
+    onConfirm: (id) => {
+      const d = DEALS.find(x => x.id === id);
+      const val = parseInt(document.getElementById('confSlider')?.value);
+      if (d && !isNaN(val)) {
+        d.confidence = val;
+        renderDealList();
+        loadDeal(id);
+        showToast('Confidence Updated', `${d.company} now at ${val}%`, 'success');
+      }
+    },
+  },
+  nextStep: {
+    title: 'Add Next Step',
+    body: (id) => `
+      <div><div class="mf-label">Task Description</div><input type="text" class="mf-input" id="ns-text" placeholder="Security review call with IT team" aria-label="Task description"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div class="mf-label">Owner</div><input type="text" class="mf-input" id="ns-owner" placeholder="You" aria-label="Owner"></div>
+        <div><div class="mf-label">Due Date</div><input type="text" class="mf-input" id="ns-date" placeholder="Mar 5" aria-label="Due date"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer">
+        <input type="checkbox" id="ns-urgent" style="accent-color:var(--red)" aria-label="Mark as urgent">
+        Mark as urgent
+      </label>`,
+    confirm: 'Add Step',
+    onConfirm: (id) => {
+      const d = DEALS.find(x => x.id === id);
+      const text  = document.getElementById('ns-text')?.value?.trim();
+      if (!text) { showToast('Required','Enter a task description','warn'); return false; }
+      const owner  = document.getElementById('ns-owner')?.value?.trim() || 'You';
+      const date   = document.getElementById('ns-date')?.value?.trim() || 'TBD';
+      const urgent = document.getElementById('ns-urgent')?.checked || false;
+      d.steps.push({ id:'ns'+Date.now(), text, owner, date, done:false, urgent });
+      renderSteps(d);
+      showToast('Step Added', `"${text}" added to next steps`, 'success');
+    },
+  },
+  addIntel: {
+    title: 'Add Competitive Intel',
+    body: (id) => `
+      <div><div class="mf-label">Intel Type</div>
+        <select class="mf-select" id="ii-type" aria-label="Intel type">
+          <option>Competitive</option><option>Integration</option><option>Pricing</option><option>Win Strategy</option><option>Risk</option><option>Opportunity</option>
+        </select>
+      </div>
+      <div><div class="mf-label">Intel Note</div>
+        <textarea class="mf-textarea" id="ii-text" placeholder="E.g. Competitor X seen in last demo — focus on AI automation angle" aria-label="Intel note"></textarea>
+      </div>`,
+    confirm: 'Add Intel',
+    onConfirm: (id) => {
+      const d    = DEALS.find(x => x.id === id);
+      const type = document.getElementById('ii-type')?.value || 'Competitive';
+      const text = document.getElementById('ii-text')?.value?.trim();
+      if (!text) { showToast('Required','Enter an intel note','warn'); return false; }
+      const typeColors = { Competitive:'var(--red)', Integration:'var(--blue)', Pricing:'var(--amber)', 'Win Strategy':'var(--green)', Risk:'var(--red)', Opportunity:'var(--purple)' };
+      const c = typeColors[type] || 'var(--text2)';
+      d.intel.unshift({ color:c, tag:type, tagStyle:`color:${c}`, text });
+      renderIntel(d);
+      showToast('Intel Added', `${type} note added to deal room`, 'success');
+    },
+  },
+  closeLost: {
+    title: 'Mark Deal as Lost',
+    body: (id) => {
+      const d = DEALS.find(x => x.id === id);
+      return `
+        <div style="text-align:center;padding:10px;background:var(--redfade);border:1px solid rgba(232,75,106,0.2);border-radius:8px">
+          <div style="font-size:32px;margin-bottom:6px">⚠️</div>
+          <div style="font-family:var(--font-d);font-size:18px;font-weight:800;color:var(--red)">${d.company} · ${fmtMoney(d.value)}</div>
+          <div style="font-family:var(--font-m);font-size:10px;color:var(--text3);margin-top:4px">This deal will be moved to Closed Lost and removed from pipeline.</div>
+        </div>
+        <div><div class="mf-label">Loss Reason</div>
+          <select class="mf-select" aria-label="Loss reason">
+            <option>Lost to competitor</option><option>Budget cut / freeze</option><option>No decision</option><option>Timing not right</option><option>Wrong ICP fit</option>
+          </select>
+        </div>
+        <div><div class="mf-label">Notes (optional)</div>
+          <textarea class="mf-textarea" placeholder="What could we have done differently?" aria-label="Notes"></textarea>
+        </div>`;
+    },
+    confirm: 'Mark Lost',
+    onConfirm: (id) => showToast('Deal Closed Lost', 'Deal has been moved to Closed Lost and logged for analysis', 'error'),
+  },
+  share: {
+    title: 'Share Deal Room',
+    body: () => `
+      <div><div class="mf-label">Invite Team Member</div>
+        <input type="email" class="mf-input" placeholder="colleague@company.com" aria-label="Email to invite">
+      </div>
+      <div><div class="mf-label">Permission</div>
+        <select class="mf-select" aria-label="Permission level">
+          <option>View only</option><option>Comment</option><option>Edit</option>
+        </select>
+      </div>
+      <div style="padding:10px;background:var(--goldfade);border:1px solid var(--goldring);border-radius:7px">
+        <div style="font-family:var(--font-m);font-size:9px;color:var(--gold2);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Current Access</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+            <div style="width:22px;height:22px;border-radius:6px;background:var(--gold);color:var(--bg);font-family:var(--font-d);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">AX</div>
+            <span>Alex Chen (You)</span><span style="font-family:var(--font-m);font-size:9px;color:var(--text3);margin-left:auto">Owner</span>
+          </div>
+        </div>
+      </div>`,
+    confirm: 'Send Invite',
+    onConfirm: () => showToast('Invite Sent','Teammate invited to deal room','success'),
+  },
+  aiCoPilot: {
+    title: '✦ AI Co-Pilot',
+    body: () => `
+      <div style="padding:12px;background:linear-gradient(135deg,rgba(155,109,255,0.08),rgba(232,184,75,0.06));border:1px solid rgba(155,109,255,0.2);border-radius:8px">
+        <div style="font-family:var(--font-m);font-size:9px;color:var(--purple);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">✦ Claude is analysing this deal…</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">Based on deal activity, BANT score, and conversation thread, win probability is <strong style="color:var(--gold)">45%</strong>. Primary risk: no signed timeline commitment from Patrick Collison (CEO). Recommended play: get Sarah Chen to schedule a 15-min exec alignment call before legal review concludes.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px 12px;background:var(--surface3);border:1px solid var(--border2);border-radius:7px;cursor:pointer;transition:all 0.12s" onclick="insertAIDraft();closeModal();showToast('Draft Ready','AI check-in drafted and loaded','info')" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border2)'" role="button" tabindex="0">
+          <div style="font-family:var(--font-m);font-size:9px;color:var(--gold2);margin-bottom:3px">Draft check-in email to Sarah →</div>
+          <div style="font-size:11px;color:var(--text2)">"Hey Sarah, just checking the docs landed okay — happy to set up a quick call with our legal team this week."</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--surface3);border:1px solid var(--border2);border-radius:7px;cursor:pointer;transition:all 0.12s" onclick="showToast('Strategy','Opening exec alignment play…','info')" onmouseover="this.style.borderColor='var(--gold2)'" onmouseout="this.style.borderColor='var(--border2)'" role="button" tabindex="0">
+          <div style="font-family:var(--font-m);font-size:9px;color:var(--purple);margin-bottom:3px">Multi-thread to Patrick Collison →</div>
+          <div style="font-size:11px;color:var(--text2)">"Patrick, wanted to make sure you had visibility into the timeline Sarah and I have been discussing…"</div>
+        </div>
+      </div>`,
+    confirm: 'Close',
+    onConfirm: () => {},
+  },
+};
+
+let currentModalData = null;
+function openModal(key, data) {
+  const def = MODALS[key];
+  if (!def) return;
+  currentModalData = data;
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">${def.title}</div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">${def.body(data)}</div>
+    <div class="modal-footer">
+      <button class="mf-cancel" onclick="closeModal()">Cancel</button>
+      <button class="mf-confirm" onclick="confirmModal('${key}')">${esc(def.confirm||'Confirm')}</button>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => modal.querySelector('input,select,button,textarea')?.focus(), 260);
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function confirmModal(key) {
+  const def = MODALS[key];
+  if (def?.onConfirm?.(currentModalData) !== false) closeModal();
+}
+
+document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+/* ═══════════════════
+   TOAST
+═══════════════════ */
+const TOAST_ICONS = { success:'✅', info:'ℹ️', warn:'⚠️', error:'❌' };
+function showToast(title, message, type='success') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div'); t.className = `toast ${type}`;
+  const ico = document.createElement('div'); ico.className='t-ico'; ico.setAttribute('aria-hidden','true'); ico.textContent=TOAST_ICONS[type]||'●';
+  const b=document.createElement('div');
+  const tt=document.createElement('div'); tt.className='t-ttl'; tt.textContent=title;
+  const tm=document.createElement('div'); tm.className='t-msg'; tm.textContent=message;
+  b.append(tt,tm); t.append(ico,b); c.appendChild(t);
+  setTimeout(() => { t.classList.add('leaving'); t.addEventListener('animationend',()=>t.remove(),{once:true}); }, 3500);
+}
+
+/* ═══════════════════
+   UTILS
+═══════════════════ */
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function fmtMoney(n) { if(n>=1000000)return'$'+(n/1000000).toFixed(1)+'M'; if(n>=1000)return'$'+(n/1000).toFixed(0)+'k'; return'$'+n; }
+
+/* ═══════════════════
+   BOOT
+═══════════════════ */
+renderDealList();
+loadDeal(1);
+</script>
+</body>
+</html>
